@@ -308,13 +308,22 @@ MonoBehaviour:
   DistractorRef: {fileID: 6675055917911164191, guid: 86603f6bcee091c4aa8a75d3393f6049, type: 3}
   hiddenCursor: {fileID: 2800000, guid: 2292662db3e1dc74188a568e21c5c910, type: 3}
   text: {fileID: 804535436}
-  A: []
-  D: []
-  W: []
+  A:
+  - 0.64
+  - 1.28
+  - 2.56
+  D:
+  - 0
+  - 0.5
+  - 1
+  W:
+  - 0.4
+  - 0.8
+  - 1.2
   maxRadius: 7
   numDistractors: 25
   maxClicks: 9
-  maxTrials: 27
+  maxTrials: 5
 --- !u!50 &640952474
 Rigidbody2D:
   serializedVersion: 4
