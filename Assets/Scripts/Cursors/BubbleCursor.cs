@@ -74,44 +74,13 @@ public class BubbleCursor : MonoBehaviour
 
     //--------------------------------------------------------| COLLISION DETECTION |------------------------------------------------------
 
-    private bool checkOverlap(GameObject obj)
-    {
-        foreach (GameObject target in ExperimentManager.Instance.Targets)
-        {
-            Vector2 distVec = obj.transform.position - target.transform.position;
-            if (distVec.magnitude < (currentRadius * 2) + 0.5f)
-            {
-                Destroy(obj);
-                return false;
-            }
-        }
-        return true;
-    }
-
-    private bool checkBounds(GameObject obj)
-    {
-        Vector2 pos = obj.transform.position;
-        if (pos.x < (-cameraSize.x + currentRadius + 2.0f) || pos.x > (cameraSize.x - currentRadius - 2.0f) ||
-            pos.y < (-cameraSize.y + currentRadius + 2.0f) || pos.y > (cameraSize.y - currentRadius - 2.0f))
-        {
-            Destroy(obj);
-            return true;
-        }
-        return false;
-    }
-
-
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.gameObject.layer == LayerMask.NameToLayer("Target"))
         {
             collided = true;
             targetCollider = collision;
-            if (collision.gameObject.tag == "Distractor")
-            {
-                collision.gameObject.transform.GetChild(2).gameObject.SetActive(true);
-            }
-            collision.gameObject.transform.GetChild(0).gameObject.SetActive(true);
+            collision.gameObject.GetComponent<Target>().setSelected(true);
         }
     }
 
@@ -121,11 +90,7 @@ public class BubbleCursor : MonoBehaviour
         if (collision.gameObject.layer == LayerMask.NameToLayer("Target"))
         {
             collided = false;
-            if (collision.gameObject.tag == "Distractor")
-            {
-                collision.gameObject.transform.GetChild(2).gameObject.SetActive(false);
-            }
-            collision.gameObject.transform.GetChild(0).gameObject.SetActive(false);
+            collision.gameObject.GetComponent<Target>().setSelected(false);
         }
     }
 }

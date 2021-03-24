@@ -175,6 +175,7 @@ GameObject:
   - component: {fileID: 6675055917911164160}
   - component: {fileID: 6675055917911164161}
   - component: {fileID: 6675055917911164190}
+  - component: {fileID: 9056063776438798531}
   m_Layer: 6
   m_Name: Distractor
   m_TagString: Distractor
@@ -266,6 +267,20 @@ CircleCollider2D:
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
   m_Radius: 1
+--- !u!114 &9056063776438798531
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6675055917911164191}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dd9a00b7626d8434fb20ea476ae22221, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  bubbleSprite: {fileID: 1191916805274973081}
+  selectionSprite: {fileID: 8728926522568188998}
 --- !u!1 &8728926522568188998
 GameObject:
   m_ObjectHideFlags: 0

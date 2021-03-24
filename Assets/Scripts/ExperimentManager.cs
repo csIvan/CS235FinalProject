@@ -18,7 +18,7 @@ public class ExperimentManager : MonoBehaviour
     // Resource references
     [SerializeField] private GameObject goalPrefab;
     [SerializeField] private GameObject distractorPrefab;
-    [SerializeField] private GameObject targetRoot;
+    [SerializeField] private GameObject targetsRoot;
     [SerializeField] private Texture2D cursorTexture;
     [SerializeField] private Text text;
 
@@ -57,6 +57,7 @@ public class ExperimentManager : MonoBehaviour
         Vector2 targetPosition = Camera.main.ScreenToWorldPoint(new Vector2(Screen.width / 2, Screen.height / 2));
         GoalObject = Instantiate(goalPrefab, targetPosition, Quaternion.identity);
         GoalObject.transform.localScale = new Vector2(0.5f, 0.5f);
+        GoalObject.transform.SetParent(targetsRoot.transform);
         Targets.Add(GoalObject);
         
         text.gameObject.SetActive(true);

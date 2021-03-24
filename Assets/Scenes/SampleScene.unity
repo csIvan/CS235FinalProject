@@ -363,9 +363,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 640952470}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7472b95e51a4d3a47a0211c0f0c67afc, type: 3}
+  m_Script: {fileID: 11500000, guid: 34c4cfc73214629498986b3aa922c93c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  maxRadius: 7
 --- !u!50 &640952474
 Rigidbody2D:
   serializedVersion: 4
@@ -446,7 +447,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 751806309}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 56a55a893f5cf5b41a36cea1907c1955, type: 3}
+  m_Script: {fileID: 11500000, guid: 649a01539a466064b807929c5124d9d7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!50 &751806312
@@ -757,7 +758,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1046087751}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0402c83dc3355b2489c9179f66a78bcc, type: 3}
+  m_Script: {fileID: 11500000, guid: 654e81556f0a61b4da80f5e76c4e40af, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &1493109331
@@ -857,7 +858,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   goalPrefab: {fileID: 7610662509062196790, guid: 2171f57176501fd42bc2296ef6fd2cea, type: 3}
   distractorPrefab: {fileID: 6675055917911164191, guid: 86603f6bcee091c4aa8a75d3393f6049, type: 3}
-  targetRoot: {fileID: 581898362}
+  targetsRoot: {fileID: 581898362}
   cursorTexture: {fileID: 2800000, guid: 2292662db3e1dc74188a568e21c5c910, type: 3}
   text: {fileID: 804535436}
   pointCursor: {fileID: 1046087751}

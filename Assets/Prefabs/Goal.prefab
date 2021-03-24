@@ -93,6 +93,7 @@ GameObject:
   - component: {fileID: 7610662509062196777}
   - component: {fileID: 7610662509062196776}
   - component: {fileID: 7610662509062196791}
+  - component: {fileID: 3981158637032277079}
   m_Layer: 6
   m_Name: Goal
   m_TagString: Goal
@@ -182,3 +183,17 @@ CircleCollider2D:
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
   m_Radius: 1
+--- !u!114 &3981158637032277079
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7610662509062196790}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dd9a00b7626d8434fb20ea476ae22221, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  bubbleSprite: {fileID: 2717505400915392688}
+  selectionSprite: {fileID: 0}
