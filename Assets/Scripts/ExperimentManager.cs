@@ -57,7 +57,7 @@ public class ExperimentManager : MonoBehaviour
         // Initial Target
         Vector2 targetPosition = Camera.main.ScreenToWorldPoint(new Vector2(Screen.width / 2, Screen.height / 2));
         GoalObject = Instantiate(goalPrefab, targetPosition, Quaternion.identity);
-        GoalObject.GetComponent<Target>().Radius = 0.25f;
+        GoalObject.GetComponent<Target>().Radius = 0.5f;
         GoalObject.transform.SetParent(targetsRoot.transform);
         Targets.Add(GoalObject);
         

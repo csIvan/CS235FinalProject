@@ -34,9 +34,9 @@ public class BubbleCursor : MonoBehaviour
         
         foreach (GameObject target in ExperimentManager.Instance.Targets)
         {
-            Vector2 diffVector = transform.position - target.transform.position;
-            float distance = diffVector.magnitude;
             float targetRadius = target.GetComponent<Target>().Radius;
+            Vector2 diffVector = transform.position - target.transform.position;
+            float distance = diffVector.magnitude - targetRadius;
 
             if (distance < firstClosest)
             {
