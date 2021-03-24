@@ -192,8 +192,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 7610662509062196790}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dd9a00b7626d8434fb20ea476ae22221, type: 3}
+  m_Script: {fileID: 11500000, guid: 82e116f6a32b12b439a29e0b029a5dcb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  bubbleSprite: {fileID: 2717505400915392688}
-  selectionSprite: {fileID: 0}
+  bubbleObject: {fileID: 2717505400915392688}
