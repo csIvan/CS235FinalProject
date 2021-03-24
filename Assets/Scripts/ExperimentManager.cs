@@ -22,6 +22,10 @@ public class ExperimentManager : MonoBehaviour
     [SerializeField] private Texture2D cursorTexture;
     [SerializeField] private Text text;
 
+    [SerializeField] private GameObject pointCursor;
+    [SerializeField] private GameObject bubbleCursor;
+    [SerializeField] private GameObject ellipseCursor;
+
     // The parameters for the experiment
     [SerializeField] private Cursor[] cursorTypes;
     [SerializeField] private int numBlocks;
