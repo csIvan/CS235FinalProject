@@ -46,7 +46,8 @@ public class ExperimentManager : MonoBehaviour
 
     void Start()
     {
-        bubbleCursor.SetActive(true);
+        //bubbleCursor.SetActive(true);
+        pointCursor.SetActive(true);
         Targets = new List<GameObject>();
         startTrial();
     }

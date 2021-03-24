@@ -7,8 +7,8 @@ public class BubbleCursor : MonoBehaviour
     [SerializeField] private float maxRadius = 7.0f;
     [SerializeField] private float margin = 0.1f;
 
-    private float currentRadius = -1.0f;
-    GameObject selectedObject = null;
+    private float bubbleRadius = -1.0f;
+    private GameObject selectedObject = null;
 
     // Update is called once per frame
     void Update()
@@ -31,9 +31,7 @@ public class BubbleCursor : MonoBehaviour
         float secondClosest = maxRadius;
         float firstTargetRadius = 0.0f;
         float secondTargetRadius = 0.0f;
-
-        List<GameObject> targets = ExperimentManager.Instance.Targets;
-
+        
         foreach (GameObject target in ExperimentManager.Instance.Targets)
         {
             Vector2 diffVector = transform.position - target.transform.position;
@@ -56,9 +54,9 @@ public class BubbleCursor : MonoBehaviour
 
         float firstBubbleRadius = firstClosest + (firstTargetRadius * 2);
         float secondBubbleRadius = secondClosest + (secondTargetRadius * 2) + margin;
-        float newRadius = Mathf.Min(firstBubbleRadius, secondBubbleRadius);
+        float bubbleRadius = Mathf.Min(firstBubbleRadius, secondBubbleRadius);
 
-        transform.localScale = new Vector2(newRadius * 2, newRadius * 2);
+        transform.localScale = new Vector2(bubbleRadius * 2, bubbleRadius * 2);
     }
 
 
