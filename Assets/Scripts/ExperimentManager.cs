@@ -5,6 +5,13 @@ using UnityEngine.UI;
 
 public class ExperimentManager : MonoBehaviour
 {
+    private enum Cursor
+    {
+        Point,
+        Bubble,
+        Ellipse
+    }
+
     // A self-reference to the singleton instance of this script
     public static ExperimentManager Instance { get; private set; }
 
@@ -15,7 +22,9 @@ public class ExperimentManager : MonoBehaviour
     [SerializeField] private Text text;
 
     // The parameters for the experiments
-    [SerializeField] private List<Block> blocks;
+    [SerializeField] private List<Cursor> cursorTypes;
+    [SerializeField] private int numBlocks;
+    [SerializeField] private Block block;
 
     private int trial = 0;
 

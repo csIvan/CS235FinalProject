@@ -2,18 +2,10 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum CursorType
-{
-    Point,
-    Bubble,
-    Ellipse
-}
-
 [Serializable]
 public class Block
 {
     // Experiment variables
-    [SerializeField] private CursorType cursorType = CursorType.Point;
     [SerializeField] private int numDistractors = 25;
     [SerializeField] private int numTrials = 5;
     [SerializeField] private int numClicks = 9;
