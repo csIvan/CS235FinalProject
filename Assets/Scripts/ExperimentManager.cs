@@ -32,8 +32,8 @@ public class ExperimentManager : MonoBehaviour
     [SerializeField] private Block block;
 
     // Target GameObjects
-    private GameObject goalObject;
-    private List<GameObject> distractorObjects;
+    public GameObject GoalObject { get; private set; }
+    public List<GameObject> Targets { get; private set; }
 
     private int currentTrial = 1;
 
@@ -46,6 +46,8 @@ public class ExperimentManager : MonoBehaviour
 
     void Start()
     {
+        bubbleCursor.SetActive(true);
+        Targets = new List<GameObject>();
         startTrial();
     }
 
@@ -53,8 +55,9 @@ public class ExperimentManager : MonoBehaviour
     {
         // Initial Target
         Vector2 targetPosition = Camera.main.ScreenToWorldPoint(new Vector2(Screen.width / 2, Screen.height / 2));
-        goalObject = Instantiate(goalPrefab, targetPosition, Quaternion.identity);
-        goalObject.transform.localScale = new Vector2(0.5f, 0.5f);
+        GoalObject = Instantiate(goalPrefab, targetPosition, Quaternion.identity);
+        GoalObject.transform.localScale = new Vector2(0.5f, 0.5f);
+        Targets.Add(GoalObject);
         
         text.gameObject.SetActive(true);
         text.text = "Trial " + currentTrial + " \nClick the target to start";
@@ -65,13 +68,15 @@ public class ExperimentManager : MonoBehaviour
 
     }
 
-    private void hit()
+    public void targetHit(GameObject hitObject)
     {
-
-    }
-
-    private void miss()
-    {
-
+        if (hitObject == GoalObject)
+        {
+            Debug.Log("Hit");
+        }
+        else
+        {
+            Debug.Log("Miss");
+        }
     }
 }
