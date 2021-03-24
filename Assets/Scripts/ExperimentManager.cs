@@ -18,64 +18,56 @@ public class ExperimentManager : MonoBehaviour
     // Resource references
     [SerializeField] private GameObject goalPrefab;
     [SerializeField] private GameObject distractorPrefab;
+    [SerializeField] private GameObject targetRoot;
     [SerializeField] private Texture2D cursorTexture;
     [SerializeField] private Text text;
 
-    // The parameters for the experiments
-    [SerializeField] private List<Cursor> cursorTypes;
+    // The parameters for the experiment
+    [SerializeField] private Cursor[] cursorTypes;
     [SerializeField] private int numBlocks;
     [SerializeField] private Block block;
 
-    private int trial = 0;
+    // Target GameObjects
+    private GameObject goalObject;
+    private List<GameObject> distractorObjects;
 
-    private GameObject goalTarget;
-    private List<GameObject> targets;
+    private int currentTrial = 1;
 
     void Awake()
     {
-        // Set this script as the only instance of the ObjectSelection script
+        // Set this script as the only instance of the ExperimentManager class
         if (Instance == null)
             Instance = this;
     }
 
     void Start()
     {
-        StartTrial();
+        startTrial();
     }
 
-    void Update()
+    private void startTrial()
     {
+        // Initial Target
+        Vector2 targetPosition = Camera.main.ScreenToWorldPoint(new Vector2(Screen.width / 2, Screen.height / 2));
+        goalObject = Instantiate(goalPrefab, targetPosition, Quaternion.identity);
+        goalObject.transform.localScale = new Vector2(0.5f, 0.5f);
         
+        text.gameObject.SetActive(true);
+        text.text = "Trial " + currentTrial + " \nClick the target to start";
     }
 
-    //-------------------------------------------------------| EXPERIMENT FUNCTIONS |-----------------------------------------------------
-    private void StartTrial()
+    private void spawnTargets(float amplitude, float density, float width, int numDistractors)
     {
-        //currentRadius = W[0] / 2.0f;
-        //currentDensity = 1;
 
-        //if (trial < maxTrials)
-        //{
+    }
 
-        //    // Initial Target
-        //    targets = new List<GameObject>();
-        //    Vector2 targetPosition = Camera.main.ScreenToWorldPoint(new Vector2(Screen.width / 2, Screen.height / 2));
-        //    goalTarget = Instantiate(goalPrefab, targetPosition, Quaternion.identity);
-        //    goalTarget.transform.localScale = new Vector2(currentRadius, currentRadius);
-        //    targets.Add(goalTarget);
+    private void hit()
+    {
 
-        //    trial++;
-        //    clicks = -1;
-        //    text.gameObject.SetActive(true);
-        //    text.text = "Trial " + trial + "\nClick the target to start";
+    }
 
-        //}
-        //else
-        //{
-        //    // End Block
-        //    currentDensity = 0;
-        //    text.gameObject.SetActive(true);
-        //    text.text = "Cursor Block Completed";
-        //}
+    private void miss()
+    {
+
     }
 }
