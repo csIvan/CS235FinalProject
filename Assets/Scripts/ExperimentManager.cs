@@ -14,7 +14,7 @@ public class ExperimentManager : MonoBehaviour
     [SerializeField] private Texture2D cursorTexture;
     [SerializeField] private Text text;
 
-    // The parameters for the experiment
+    // The parameters for the experiments
     [SerializeField] private List<Block> blocks;
 
     private int trial = 0;

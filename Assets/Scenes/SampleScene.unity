@@ -602,39 +602,59 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 278b0d54755a6f44186553528157f4e3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  goalPrefab: {fileID: 7610662509062196790, guid: 2171f57176501fd42bc2296ef6fd2cea, type: 3}
-  distractorPrefab: {fileID: 6675055917911164191, guid: 86603f6bcee091c4aa8a75d3393f6049, type: 3}
-  cursorTexture: {fileID: 2800000, guid: 2292662db3e1dc74188a568e21c5c910, type: 3}
-  text: {fileID: 804535436}
+  goalPrefab: {fileID: 0}
+  distractorPrefab: {fileID: 0}
+  cursorTexture: {fileID: 0}
+  text: {fileID: 0}
   blocks:
   - cursorType: 0
     numDistractors: 0
     numTrials: 0
     numClicks: 0
-    A: []
-    D: []
-    W: []
-  - cursorType: 0
+    A:
+    - 0.64
+    - 1.28
+    - 2.56
+    D:
+    - 0.25
+    - 0.5
+    - 1
+    W:
+    - 0.4
+    - 0.8
+    - 1.2
+  - cursorType: 1
     numDistractors: 0
     numTrials: 0
     numClicks: 0
-    A: []
-    D: []
-    W: []
-  - cursorType: 0
+    A:
+    - 0.64
+    - 1.28
+    - 2.56
+    D:
+    - 0.25
+    - 0.5
+    - 1
+    W:
+    - 0.4
+    - 0.8
+    - 1.2
+  - cursorType: 2
     numDistractors: 0
     numTrials: 0
     numClicks: 0
-    A: []
-    D: []
-    W: []
-  - cursorType: 0
-    numDistractors: 0
-    numTrials: 0
-    numClicks: 0
-    A: []
-    D: []
-    W: []
+    A:
+    - 0.64
+    - 1.28
+    - 2.56
+    D:
+    - 0.25
+    - 0.5
+    - 1
+    W:
+    - 0.4
+    - 0.8
+    - 1.2
 --- !u!4 &1579119745
 Transform:
   m_ObjectHideFlags: 0

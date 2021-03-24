@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public enum CursorType
@@ -17,8 +18,8 @@ public class Block
     [SerializeField] private int numTrials = 5;
     [SerializeField] private int numClicks = 9;
 
-    // Independent variables (Distance, Density, Width)
-    [SerializeField] private float[] A = { 0.64f, 1.28f, 2.56f };
-    [SerializeField] private float[] D = { 0.25f, 0.5f, 1.0f };
-    [SerializeField] private float[] W = { 0.4f, 0.8f, 1.2f };
+    // Independent variables (Amplitude, Density, Width)
+    [SerializeField] private List<float> A;
+    [SerializeField] private List<float> D;
+    [SerializeField] private List<float> W;
 }
