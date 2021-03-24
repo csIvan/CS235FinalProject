@@ -5,6 +5,9 @@ using UnityEngine.UI;
 
 public class ExperimentManager : MonoBehaviour
 {
+    //A self-reference to the singleton instance of this script
+    public static ExperimentManager Instance { get; private set; }
+
     [SerializeField] private GameObject goalPrefab;
     [SerializeField] private GameObject distractorPrefab;
     [SerializeField] private Texture2D cursorTexture;
@@ -27,6 +30,13 @@ public class ExperimentManager : MonoBehaviour
 
     private GameObject goalTarget;
     private List<GameObject> targets;
+
+    void Awake()
+    {
+        //Set this script as the only instance of the ObjectSelection script
+        if (Instance == null)
+            Instance = this;
+    }
 
     void Start()
     {
