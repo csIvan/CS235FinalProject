@@ -7,12 +7,31 @@ public class Target : MonoBehaviour
     [SerializeField] private GameObject bubbleSprite;
     [SerializeField] private GameObject selectionSprite;
 
-    public void setSelected(bool enabled)
-    {
-        if (bubbleSprite != null)
-            bubbleSprite.SetActive(enabled);
+    private float radius = 1.0f;
+    private bool selected = false;
 
-        if (selectionSprite != null)
-            selectionSprite.SetActive(enabled);
+    public float Radius
+    {
+        get { return radius;  }
+
+        set
+        {
+            transform.localScale = new Vector2(radius*2, radius*2);
+            radius = value;
+        }
+    }
+
+    public bool Selected
+    {
+        get { return selected;  }
+
+        set
+        {
+            if (bubbleSprite != null)
+                bubbleSprite.SetActive(value);
+
+            if (selectionSprite != null)
+                selectionSprite.SetActive(value);
+        }
     }
 }

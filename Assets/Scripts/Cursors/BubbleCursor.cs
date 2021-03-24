@@ -72,7 +72,6 @@ public class BubbleCursor : MonoBehaviour
         transform.localScale = new Vector2(radius * 2, radius * 2);
     }
 
-    //--------------------------------------------------------| COLLISION DETECTION |------------------------------------------------------
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
@@ -80,7 +79,7 @@ public class BubbleCursor : MonoBehaviour
         {
             collided = true;
             targetCollider = collision;
-            collision.gameObject.GetComponent<Target>().setSelected(true);
+            collision.gameObject.GetComponent<Target>().Selected = true;
         }
     }
 
@@ -90,7 +89,7 @@ public class BubbleCursor : MonoBehaviour
         if (collision.gameObject.layer == LayerMask.NameToLayer("Target"))
         {
             collided = false;
-            collision.gameObject.GetComponent<Target>().setSelected(false);
+            collision.gameObject.GetComponent<Target>().Selected = false;
         }
     }
 }
