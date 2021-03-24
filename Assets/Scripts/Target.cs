@@ -16,8 +16,8 @@ public class Target : MonoBehaviour
 
         set
         {
-            transform.localScale = new Vector2(radius*2, radius*2);
             radius = value;
+            transform.localScale = new Vector2(radius*2, radius*2);
         }
     }
 

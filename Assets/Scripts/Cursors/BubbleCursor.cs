@@ -5,19 +5,10 @@ using UnityEngine;
 public class BubbleCursor : MonoBehaviour
 {
     [SerializeField] private float maxRadius = 7.0f;
+    [SerializeField] private float margin = 0.1f;
+
     private float currentRadius = -1.0f;
-
-    Vector2 cameraSize;
-    Vector2 lastGoalPos;
-    Collider2D targetCollider;
-    bool collided = false;
-
-    void Start()
-    {
-        float screenAspect = (float)Screen.width / (float)Screen.height;
-        float cameraHeight = Camera.main.orthographicSize * 2;
-        cameraSize = new Vector2((cameraHeight * screenAspect) / 2, cameraHeight / 2);
-    }
+    GameObject selectedObject = null;
 
     // Update is called once per frame
     void Update()
@@ -29,47 +20,45 @@ public class BubbleCursor : MonoBehaviour
         // Apply Bubble Cursor Algorithm
         BubbleAlgorithm();
 
-        if (collided && Input.GetMouseButtonDown(0))
-        {
-            ExperimentManager.Instance.targetHit(targetCollider.gameObject);
-        }
+        if (selectedObject != null && Input.GetMouseButtonDown(0))
+            ExperimentManager.Instance.targetHit(selectedObject);
     }
 
     // Implementation of Bubble Cursor
     private void BubbleAlgorithm()
     {
-        float closest = float.MaxValue - 1;
-        float secondClosest = float.MaxValue;
-        float closestContainment = float.MaxValue;
+        float firstClosest = maxRadius;
+        float secondClosest = maxRadius;
+        float firstTargetRadius = 0.0f;
+        float secondTargetRadius = 0.0f;
+
+        List<GameObject> targets = ExperimentManager.Instance.Targets;
 
         foreach (GameObject target in ExperimentManager.Instance.Targets)
         {
-            Vector2 targetDist = target.transform.position;
-            Vector2 cursorCenter = transform.position;
-            Vector2 dir = cursorCenter - targetDist;
+            Vector2 diffVector = transform.position - target.transform.position;
+            float distance = diffVector.magnitude;
+            float targetRadius = target.GetComponent<Target>().Radius;
 
-            Vector2 closestPoint = targetDist + dir.normalized * currentRadius;
-            Vector2 farthestPoint = targetDist + dir.normalized * -currentRadius;
-
-            float intersectDist = Mathf.Sqrt(Mathf.Pow(cursorCenter.x - closestPoint.x, 2) + Mathf.Pow(cursorCenter.y - closestPoint.y, 2));
-            float containmentDist = Mathf.Sqrt(Mathf.Pow(cursorCenter.x - farthestPoint.x, 2) + Mathf.Pow(cursorCenter.y - farthestPoint.y, 2));
-
-            if (intersectDist <= closest)
+            if (distance < firstClosest)
             {
-                secondClosest = closest;
-                closest = intersectDist;
-                closestContainment = containmentDist;
+                secondClosest = firstClosest;
+                secondTargetRadius = firstTargetRadius;
+                firstClosest = distance;
+                firstTargetRadius = targetRadius;
             }
-            else if (intersectDist <= secondClosest)
+            else if (distance < secondClosest)
             {
-                secondClosest = intersectDist;
+                secondClosest = distance;
+                secondTargetRadius = targetRadius;
             }
         }
 
-        float radius = Mathf.Min(Mathf.Min(closestContainment + 0.05f, secondClosest - 0.001f), maxRadius);
+        float firstBubbleRadius = firstClosest + (firstTargetRadius * 2);
+        float secondBubbleRadius = secondClosest + (secondTargetRadius * 2) + margin;
+        float newRadius = Mathf.Min(firstBubbleRadius, secondBubbleRadius);
 
-        // Update cursor size
-        transform.localScale = new Vector2(radius * 2, radius * 2);
+        transform.localScale = new Vector2(newRadius * 2, newRadius * 2);
     }
 
 
@@ -77,8 +66,7 @@ public class BubbleCursor : MonoBehaviour
     {
         if (collision.gameObject.layer == LayerMask.NameToLayer("Target"))
         {
-            collided = true;
-            targetCollider = collision;
+            selectedObject = collision.gameObject;
             collision.gameObject.GetComponent<Target>().Selected = true;
         }
     }
@@ -88,8 +76,8 @@ public class BubbleCursor : MonoBehaviour
     {
         if (collision.gameObject.layer == LayerMask.NameToLayer("Target"))
         {
-            collided = false;
             collision.gameObject.GetComponent<Target>().Selected = false;
+            selectedObject = null;
         }
     }
 }
