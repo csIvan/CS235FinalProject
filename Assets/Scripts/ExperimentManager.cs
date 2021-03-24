@@ -61,6 +61,12 @@ public class ExperimentManager : MonoBehaviour
         GoalObject.transform.SetParent(targetsRoot.transform);
         Targets.Add(GoalObject);
         
+        // Test distractor
+        GameObject distractor = Instantiate(distractorPrefab, new Vector2(2.0f, 2.0f), Quaternion.identity);
+        distractor.GetComponent<Target>().Radius = 0.5f;
+        distractor.transform.SetParent(targetsRoot.transform);
+        Targets.Add(distractor);
+
         text.gameObject.SetActive(true);
         text.text = "Trial " + currentTrial + " \nClick the target to start";
     }

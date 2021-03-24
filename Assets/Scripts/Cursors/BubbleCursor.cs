@@ -6,6 +6,7 @@ public class BubbleCursor : MonoBehaviour
 {
     [SerializeField] private float maxRadius = 7.0f;
     [SerializeField] private float margin = 0.1f;
+    [SerializeField] private float epsilon = 0.001f;
 
     private float bubbleRadius = -1.0f;
     private GameObject selectedObject = null;
@@ -32,6 +33,7 @@ public class BubbleCursor : MonoBehaviour
         float firstTargetRadius = 0.0f;
         float secondTargetRadius = 0.0f;
         
+        // Find closest and second closest targets
         foreach (GameObject target in ExperimentManager.Instance.Targets)
         {
             float targetRadius = target.GetComponent<Target>().Radius;
@@ -52,9 +54,18 @@ public class BubbleCursor : MonoBehaviour
             }
         }
 
-        float firstBubbleRadius = firstClosest + (firstTargetRadius * 2);
-        float secondBubbleRadius = secondClosest + (secondTargetRadius * 2) + margin;
-        float bubbleRadius = Mathf.Min(firstBubbleRadius, secondBubbleRadius);
+        // Bubble fully encapsulates the closest target
+        if (firstClosest + (firstTargetRadius * 2) < secondClosest - margin)
+            bubbleRadius = firstClosest + (firstTargetRadius * 2);
+        // Bubble extends until the margin of the second closest target
+        else if (firstClosest + margin < secondClosest - margin)
+            bubbleRadius = secondClosest - margin;
+        // Bubble extends until it touches the closest target plus some margin
+        else if (firstClosest + margin < secondClosest)
+            bubbleRadius = firstClosest + margin;
+        //Bubble extends until it almost touches the second closest target
+        else
+            bubbleRadius = secondClosest - epsilon;
 
         transform.localScale = new Vector2(bubbleRadius * 2, bubbleRadius * 2);
     }
