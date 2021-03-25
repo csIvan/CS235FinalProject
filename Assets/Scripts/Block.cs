@@ -3,6 +3,21 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
+public struct TrialVars
+{
+    public float A { get; set; }
+    public float D { get; set; }
+    public float W { get; set; }
+
+    public TrialVars(float A, float D, float W)
+    {
+        this.A = A;
+        this.D = D;
+        this.W = W;
+    }
+}
+
+
 [Serializable]
 public class Block
 {
@@ -17,20 +32,18 @@ public class Block
 
     private static System.Random rng = new System.Random();
     private bool initialized = false;
-    private System.Object[] combinations;
+    private TrialVars[] combinations;
     private int[] randomIndices;
 
     public int NumTrials { get; private set; }
     public int CurrTrial { get; private set; }
-    public float CurrA { get; private set; }
-    public float CurrD { get; private set; }
-    public float CurrW { get; private set; }
+    public TrialVars CurrTrialVars { get; private set; }
 
 
     private void genCombinations()
     {
         // Instantiate an array to contain all the combinations
-        combinations = new System.Object[NumTrials];
+        combinations = new TrialVars[NumTrials];
 
         int combIndex = 0;
 
@@ -38,7 +51,7 @@ public class Block
         for (int AIndex = 0; AIndex < A.Length; AIndex++)
             for (int DIndex = 0; DIndex < D.Length; DIndex++)
                 for (int WIndex = 0; WIndex < W.Length; WIndex++)
-                    combinations[combIndex++] = new float[3] { A[AIndex], D[DIndex], W[WIndex] };
+                    combinations[combIndex++] = new TrialVars(A[AIndex], D[DIndex], W[WIndex]);
     }
 
     private void genRandomIndices()
@@ -86,14 +99,7 @@ public class Block
 
         // Get the variables of the current trial
         int combIndex = randomIndices[CurrTrial];
-        float[] variables = (float[])combinations[combIndex];
-
-        // Store the variables
-        CurrA = variables[0];
-        CurrD = variables[1];
-        CurrW = variables[2];
-
-        NumTrials++;
+        CurrTrialVars = combinations[combIndex];
 
         return true;
     }
