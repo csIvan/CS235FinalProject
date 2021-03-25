@@ -4,9 +4,9 @@ using UnityEngine;
 
 public class BubbleCursor : MonoBehaviour
 {
-    [SerializeField] private float maxRadius = 7.0f;
-    [SerializeField] private float margin = 0.1f;
-    [SerializeField] private float epsilon = 0.001f;
+    [SerializeField] private float maxRadius = 100.0f;
+    [SerializeField] private float margin = 10f;
+    [SerializeField] private float epsilon = 0.1f;
 
     private float bubbleRadius = -1.0f;
     private GameObject selectedObject = null;
@@ -37,7 +37,7 @@ public class BubbleCursor : MonoBehaviour
         foreach (GameObject target in ExperimentManager.Instance.Targets)
         {
             float targetRadius = target.GetComponent<Target>().Radius;
-            Vector2 diffVector = transform.position - target.transform.position;
+            Vector2 diffVector = transform.localPosition - target.transform.localPosition;
             float distance = diffVector.magnitude - targetRadius;
 
             if (distance < firstClosest)

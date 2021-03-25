@@ -27,8 +27,9 @@ public class ExperimentManager : MonoBehaviour
     [SerializeField] private GameObject ellipseCursor;
 
     // The parameters for the experiment
-    [SerializeField] private float targetRadius;
-    [SerializeField] private float targetMargin;
+    [SerializeField] private Vector2 experimentArea = new Vector2(1000.0f, 1500.0f);
+    [SerializeField] private float targetRadius = 5.0f;
+    [SerializeField] private float targetMargin = 5.0f;
     [SerializeField] private Cursor[] cursorTypes;
     [SerializeField] private Block trainingBlock;
     [SerializeField] private Block experimentBlock;
@@ -42,7 +43,6 @@ public class ExperimentManager : MonoBehaviour
     private IEnumerator ICurrentTrial;
     private int currentClick = 0;
     private Vector2 lastGoalPos;
-    Vector2 cameraSize;
 
     void Awake()
     {
@@ -53,10 +53,6 @@ public class ExperimentManager : MonoBehaviour
 
     void Start()
     {
-        float screenAspect = (float)Screen.width / (float)Screen.height;
-        float cameraHeight = Camera.main.orthographicSize * 2;
-        cameraSize = new Vector2((cameraHeight * screenAspect) / 2, cameraHeight / 2);
-
         bubbleCursor.SetActive(true);
         //pointCursor.SetActive(true);
         Targets = new List<GameObject>();
@@ -72,7 +68,7 @@ public class ExperimentManager : MonoBehaviour
 
         Vector2 targetPosition = Camera.main.ScreenToWorldPoint(new Vector2(Screen.width / 2.0f, Screen.height / 2.0f));
         GoalObject = InstantiateTarget(goalPrefab, targetPosition, targetRadius);
-        lastGoalPos = GoalObject.transform.position;
+        lastGoalPos = GoalObject.transform.localPosition;
         
         ICurrentTrial.Reset();
         ICurrentTrial.MoveNext();
@@ -95,24 +91,31 @@ public class ExperimentManager : MonoBehaviour
         // Set the location of the goal target
         do
         {
-            float angle = Random.Range(0, Mathf.PI * 2.0f);
-            GoalObject.transform.position = new Vector2(Mathf.Sin(angle) * 6.0f, Mathf.Cos(angle) * 6.0f) + lastGoalPos;
+            // Generate a random point in the experiment area
+            Vector2 randomPos = randomTargetPos();
+            // Get the vector from the last goal position to the random point
+            Vector2 offset = lastGoalPos - randomPos;
+            // Adjust the vector to have the correct amplitude
+            offset = offset.normalized * variables.A;
+
+            // Set the new goal position
+            GoalObject.transform.localPosition = lastGoalPos + offset;
 
         } while (!checkInBounds(GoalObject));
 
         // Four Distractors to control Goal Target's Effective Width
         for (int i = 0; i < 4; i++)
         {
-            Vector2 dir = lastGoalPos - (Vector2)GoalObject.transform.position;
-            float sign = (GoalObject.transform.position.y < lastGoalPos.y) ? -1.0f : 1.0f;
+            Vector2 dir = lastGoalPos - (Vector2)GoalObject.transform.localPosition;
+            float sign = (GoalObject.transform.localPosition.y < lastGoalPos.y) ? -1.0f : 1.0f;
             float dist = (targetRadius == variables.W / 2.0f) ? 1.0f : 2.0f;
 
             float angle = Mathf.Deg2Rad * (Vector2.Angle(Vector2.right, dir) * sign + (90 * i));
-            Vector2 pos2d = new Vector2(Mathf.Sin(angle) * dist, Mathf.Cos(angle) * dist) + (Vector2)GoalObject.transform.position;
+            Vector2 pos2d = new Vector2(Mathf.Sin(angle) * dist, Mathf.Cos(angle) * dist) + (Vector2)GoalObject.transform.localPosition;
             InstantiateTarget(distractorPrefab, pos2d, targetRadius);
         }
 
-        lastGoalPos = GoalObject.transform.position;
+        lastGoalPos = GoalObject.transform.localPosition;
     }
 
     private void SpawnDistractors(TrialVars variables, int numDistractors)
@@ -124,10 +127,20 @@ public class ExperimentManager : MonoBehaviour
 
             do
             {
-                Vector2 randomPosition = new Vector2(Random.Range(0 + ScreenOffset, Screen.width - ScreenOffset), Random.Range(0 + ScreenOffset, Screen.height - ScreenOffset));
-                target.transform.position = (Vector2)Camera.main.ScreenToWorldPoint(randomPosition);
+                target.transform.localPosition = randomTargetPos();
             } while (checkOverlap(target));
         }
+    }
+
+    private Vector2 randomTargetPos()
+    {
+        float halfWidth = experimentArea.x / 2.0f;
+        float halfHeight = experimentArea.y / 2.0f;
+
+        float randomX = Random.Range(-halfWidth, halfWidth);
+        float randomY = Random.Range(-halfHeight, halfHeight);
+
+        return new Vector2(randomX, randomY);
     }
 
     private GameObject InstantiateTarget(GameObject targetPrefab, Vector2 position, float radius)
@@ -156,7 +169,7 @@ public class ExperimentManager : MonoBehaviour
             if (target1 == target2)
                 continue;
 
-            Vector2 distVec = target1.transform.position - target2.transform.position;
+            Vector2 distVec = target1.transform.localPosition - target2.transform.localPosition;
             float radius1 = target1.GetComponent<Target>().Radius;
             float radius2 = target2.GetComponent<Target>().Radius;
 
@@ -169,11 +182,14 @@ public class ExperimentManager : MonoBehaviour
 
     private bool checkInBounds(GameObject target)
     {
-        Vector2 pos = target.transform.position;
+        Vector2 pos = target.transform.localPosition;
         float radius = target.GetComponent<Target>().Radius;
 
-        if (pos.x < (-cameraSize.x + radius + targetMargin) || pos.x > (cameraSize.x - radius - targetMargin) ||
-            pos.y < (-cameraSize.y + radius + targetMargin) || pos.y > (cameraSize.y - radius - targetMargin))
+        float halfWidth = experimentArea.x / 2.0f;
+        float halfHeight = experimentArea.y / 2.0f;
+
+        if (pos.x < (-halfWidth + radius + targetMargin) || pos.x > (halfWidth - radius - targetMargin) ||
+            pos.y < (-halfHeight + radius + targetMargin) || pos.y > (halfHeight - radius - targetMargin))
             return false;
 
         return true;
