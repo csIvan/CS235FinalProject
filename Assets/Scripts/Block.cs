@@ -1,9 +1,10 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public struct TrialVars
+public class TrialVars
 {
     public float A { get; set; }
     public float D { get; set; }
@@ -19,7 +20,7 @@ public struct TrialVars
 
 
 [Serializable]
-public class Block
+public class Block : IEnumerator, IEnumerable
 {
     // Experiment variables
     [SerializeField] private int numDistractors = 25;
@@ -31,19 +32,60 @@ public class Block
     [SerializeField] private float[] W;
 
     private static System.Random rng = new System.Random();
-    private bool initialized = false;
+
+    private int numTrials = -1;
     private TrialVars[] combinations;
     private int[] randomIndices;
 
-    public int NumTrials { get; private set; }
+    public int NumDistractors { get { return numDistractors; } }
+    public int ClicksPerTrial { get { return clicksPerTrial; } }
+
+    public int NumTrials
+    {
+        get
+        {
+            if (numTrials < 0)
+                numTrials = A.Length * D.Length * W.Length;
+
+            return numTrials;
+        }
+
+        private set { numTrials = value; }
+    }
+
+    public TrialVars[] Combinations
+    {
+        get
+        {
+            if (combinations == null)
+                genCombinations();
+
+            return combinations;
+        }
+
+        private set { combinations = value; }
+    }
+
+    public int[] RandomIndices
+    {
+        get
+        {
+            if (randomIndices == null)
+                genRandomIndices();
+
+            return randomIndices;
+        }
+
+        private set { randomIndices = value; }
+    }
+
     public int CurrTrial { get; private set; }
     public TrialVars CurrTrialVars { get; private set; }
-
 
     private void genCombinations()
     {
         // Instantiate an array to contain all the combinations
-        combinations = new TrialVars[NumTrials];
+        Combinations = new TrialVars[NumTrials];
 
         int combIndex = 0;
 
@@ -51,56 +93,58 @@ public class Block
         for (int AIndex = 0; AIndex < A.Length; AIndex++)
             for (int DIndex = 0; DIndex < D.Length; DIndex++)
                 for (int WIndex = 0; WIndex < W.Length; WIndex++)
-                    combinations[combIndex++] = new TrialVars(A[AIndex], D[DIndex], W[WIndex]);
+                    Combinations[combIndex++] = new TrialVars(A[AIndex], D[DIndex], W[WIndex]);
     }
 
     private void genRandomIndices()
     {
         // Generate an array containing each index of the combinations array
-        randomIndices = Enumerable.Range(0, NumTrials).ToArray();
+        RandomIndices = Enumerable.Range(0, NumTrials).ToArray();
 
         // Randomize the array using Fisher-Yates shuffle
-        for (int index1 = randomIndices.Length - 1; index1 > 0; index1--)
+        for (int index1 = RandomIndices.Length - 1; index1 > 0; index1--)
         {
             index1--;
             int index2 = rng.Next(index1 + 1);
-            int tempValue = randomIndices[index2];
-            randomIndices[index2] = randomIndices[index1];
-            randomIndices[index1] = tempValue;
+            int tempValue = RandomIndices[index2];
+            RandomIndices[index2] = RandomIndices[index1];
+            RandomIndices[index1] = tempValue;
         }
     }
 
-    // Reset the random indices
-    public void reset()
+    // IEnumerator and IEnumerable
+    public IEnumerator GetEnumerator()
     {
-        NumTrials = A.Length * D.Length * W.Length;
+        return (IEnumerator)this;
+    }
+
+    // IEnumerable
+    public void Reset()
+    {
         CurrTrial = 0;
         genRandomIndices();
     }
 
-    public int remainingTrials()
-    {
-        return NumTrials - CurrTrial;
-    }
-
-    // Get the next combination of variables
-    public bool nextTrial()
+    // IEnumerator
+    public bool MoveNext()
     {
         // Return false if there is no next trial
         if (CurrTrial >= NumTrials)
             return false;
 
-        // Initialize the variable combinations if they aren't already
-        if (!initialized)
-        {
-            genCombinations();
-            initialized = true;
-        }
-
-        // Get the variables of the current trial
-        int combIndex = randomIndices[CurrTrial];
-        CurrTrialVars = combinations[combIndex];
+        // Move to the next trial
+        CurrTrial++;
 
         return true;
+    }
+
+    // IEnumerable
+    public object Current
+    {
+        get
+        {
+            int combIndex = RandomIndices[CurrTrial];
+            return Combinations[combIndex];
+        }
     }
 }
