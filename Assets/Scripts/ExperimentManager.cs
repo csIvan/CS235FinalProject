@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -27,13 +28,15 @@ public class ExperimentManager : MonoBehaviour
 
     // The parameters for the experiment
     [SerializeField] private Cursor[] cursorTypes;
-    [SerializeField] private Block[] blocks;
+    [SerializeField] private Block trainingBlock;
+    [SerializeField] private Block experimentBlock;
 
     // Target GameObjects
     public GameObject GoalObject { get; private set; }
     public List<GameObject> Targets { get; private set; }
 
-    private int currentBlock = 0;
+    private IEnumerator ITrainingVars;
+    private IEnumerator IExperimentVars;
     private int currentTrial = 0;
 
     void Awake()
@@ -48,6 +51,8 @@ public class ExperimentManager : MonoBehaviour
         bubbleCursor.SetActive(true);
         //pointCursor.SetActive(true);
         Targets = new List<GameObject>();
+        ITrainingVars = trainingBlock.GetEnumerator();
+        IExperimentVars = experimentBlock.GetEnumerator();
         startTrial();
     }
 
@@ -68,6 +73,9 @@ public class ExperimentManager : MonoBehaviour
 
         trialStartText.gameObject.SetActive(true);
         trialStartText.text = "Trial " + 1 + " \nClick the target to start";
+
+        if (IExperimentVars.MoveNext())
+            Debug.Log("Amplitude: " + ((TrialVars)IExperimentVars.Current).A);
     }
 
     private void spawnTargets(float amplitude, float density, float width, int numDistractors)
@@ -79,7 +87,18 @@ public class ExperimentManager : MonoBehaviour
     {
         if (hitObject == GoalObject)
         {
-            Debug.Log("Hit");
+            if (currentTrial >= experimentBlock.ClicksPerTrial)
+            {
+                if (IExperimentVars.MoveNext())
+                    Debug.Log("Amplitude: " + ((TrialVars)IExperimentVars.Current).A);
+                else
+                    IExperimentVars.Reset();
+
+                currentTrial = 0;
+            }
+
+            Debug.Log("Trial: " + (currentTrial + 1));
+            currentTrial++;
         }
         else
         {

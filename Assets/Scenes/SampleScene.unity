@@ -867,16 +867,17 @@ MonoBehaviour:
   bubbleCursor: {fileID: 640952470}
   ellipseCursor: {fileID: 751806309}
   cursorTypes: 000000000100000002000000
-  blocks:
-  - numDistractors: 25
-    clicksPerTrial: 5
+  trainingBlock:
+    numDistractors: 25
+    clicksPerTrial: 9
     A:
     - 4
     D:
-    - 0
+    - 4
     W:
     - 0.4
-  - numDistractors: 25
+  experimentBlock:
+    numDistractors: 25
     clicksPerTrial: 9
     A:
     - 4
@@ -884,8 +885,8 @@ MonoBehaviour:
     - 6
     D:
     - 0
-    - 0.5
-    - 1
+    - 3
+    - 6
     W:
     - 0.4
     - 0.8
