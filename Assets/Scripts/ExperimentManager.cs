@@ -20,7 +20,7 @@ public class ExperimentManager : MonoBehaviour
     [SerializeField] private GameObject distractorPrefab;
     [SerializeField] private GameObject targetsRoot;
     [SerializeField] private Texture2D cursorTexture;
-    [SerializeField] private Text text;
+    [SerializeField] private Text trialStartText;
 
     [SerializeField] private GameObject pointCursor;
     [SerializeField] private GameObject bubbleCursor;
@@ -35,7 +35,8 @@ public class ExperimentManager : MonoBehaviour
     public GameObject GoalObject { get; private set; }
     public List<GameObject> Targets { get; private set; }
 
-    private int currentTrial = 1;
+    private int currentBlock = 0;
+    private int currentTrial = 0;
 
     void Awake()
     {
@@ -49,13 +50,14 @@ public class ExperimentManager : MonoBehaviour
         bubbleCursor.SetActive(true);
         //pointCursor.SetActive(true);
         Targets = new List<GameObject>();
+        block.reset();
         startTrial();
     }
 
     private void startTrial()
     {
         // Initial Target
-        Vector2 targetPosition = Camera.main.ScreenToWorldPoint(new Vector2(Screen.width / 2, Screen.height / 2));
+        Vector2 targetPosition = Camera.main.ScreenToWorldPoint(new Vector2(Screen.width / 2.0f, Screen.height / 2.0f));
         GoalObject = Instantiate(goalPrefab, targetPosition, Quaternion.identity);
         GoalObject.GetComponent<Target>().Radius = 0.5f;
         GoalObject.transform.SetParent(targetsRoot.transform);
@@ -67,8 +69,8 @@ public class ExperimentManager : MonoBehaviour
         distractor.transform.SetParent(targetsRoot.transform);
         Targets.Add(distractor);
 
-        text.gameObject.SetActive(true);
-        text.text = "Trial " + currentTrial + " \nClick the target to start";
+        trialStartText.gameObject.SetActive(true);
+        trialStartText.text = "Trial " + block.CurrTrial + " \nClick the target to start";
     }
 
     private void spawnTargets(float amplitude, float density, float width, int numDistractors)
