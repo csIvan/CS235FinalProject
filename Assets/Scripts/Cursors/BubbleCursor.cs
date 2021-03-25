@@ -21,7 +21,7 @@ public class BubbleCursor : MonoBehaviour
         // Apply Bubble Cursor Algorithm
         BubbleAlgorithm();
 
-        if (selectedObject != null && Input.GetMouseButtonDown(0))
+        if (Input.GetMouseButtonDown(0))
             ExperimentManager.Instance.targetHit(selectedObject);
     }
 
