@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using UnityEngine;
 
 [Serializable]
@@ -10,9 +9,9 @@ public class Block
     [SerializeField] private int clicksPerTrial = 9;
 
     // Independent variables (Amplitude, Density, Width)
-    [SerializeField] private List<float> A;
-    [SerializeField] private List<float> D;
-    [SerializeField] private List<float> W;
+    [SerializeField] private float[] A;
+    [SerializeField] private float[] D;
+    [SerializeField] private float[] W;
 
     private bool initialized = false;
 
@@ -26,17 +25,16 @@ public class Block
     public void reset()
     {
         //Calculate the total number of trials in the block
-        NumTrials = Utility.IntPow(A.Count, (uint)D.Count);
-        NumTrials = Utility.IntPow(NumTrials, (uint)W.Count);
+        NumTrials = A.Length * D.Length * W.Length;
 
-        CurrTrial = 1;
+        CurrTrial = 0;
 
         // To-do: Generate variable combinations
     }
 
     public int remainingTrials()
     {
-        return NumTrials - CurrTrial + 1;
+        return NumTrials - CurrTrial;
     }
 
     // Get the next combination of variables

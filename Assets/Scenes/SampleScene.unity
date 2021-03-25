@@ -865,11 +865,18 @@ MonoBehaviour:
   trialStartText: {fileID: 804535436}
   pointCursor: {fileID: 1046087751}
   bubbleCursor: {fileID: 640952470}
-  ellipseCursor: {fileID: 0}
+  ellipseCursor: {fileID: 751806309}
   cursorTypes: 000000000100000002000000
-  numBlocks: 1
-  block:
-    numDistractors: 25
+  blocks:
+  - numDistractors: 25
+    clicksPerTrial: 5
+    A:
+    - 4
+    D:
+    - 0
+    W:
+    - 0.4
+  - numDistractors: 25
     clicksPerTrial: 9
     A:
     - 4

@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -28,8 +27,7 @@ public class ExperimentManager : MonoBehaviour
 
     // The parameters for the experiment
     [SerializeField] private Cursor[] cursorTypes;
-    [SerializeField] private int numBlocks;
-    [SerializeField] private Block block;
+    [SerializeField] private Block[] blocks;
 
     // Target GameObjects
     public GameObject GoalObject { get; private set; }
@@ -50,7 +48,6 @@ public class ExperimentManager : MonoBehaviour
         bubbleCursor.SetActive(true);
         //pointCursor.SetActive(true);
         Targets = new List<GameObject>();
-        block.reset();
         startTrial();
     }
 
@@ -70,7 +67,7 @@ public class ExperimentManager : MonoBehaviour
         Targets.Add(distractor);
 
         trialStartText.gameObject.SetActive(true);
-        trialStartText.text = "Trial " + block.CurrTrial + " \nClick the target to start";
+        trialStartText.text = "Trial " + 1 + " \nClick the target to start";
     }
 
     private void spawnTargets(float amplitude, float density, float width, int numDistractors)
