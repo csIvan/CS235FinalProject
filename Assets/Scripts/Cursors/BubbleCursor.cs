@@ -11,9 +11,20 @@ public class BubbleCursor : MonoBehaviour
     private float bubbleRadius = -1.0f;
     private GameObject selectedObject = null;
 
+    private float movementTime = 0;
+    private float timer = 5.0f;
+    private bool resetTime = false;
+
     // Update is called once per frame
     void Update()
     {
+        // Measure movement time
+        movementTime += Time.deltaTime;
+        if (movementTime >= timer) {
+            ExperimentManager.Instance.targetHit(null, movementTime);
+            movementTime = 0f;
+        }
+
         // Area Cursor - use mouse's location to update circle's position
         Vector2 mouse = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         transform.position = mouse;
@@ -21,8 +32,16 @@ public class BubbleCursor : MonoBehaviour
         // Apply Bubble Cursor Algorithm
         BubbleAlgorithm();
 
-        if (Input.GetMouseButtonDown(0))
-            ExperimentManager.Instance.targetHit(selectedObject);
+        if (Input.GetMouseButtonDown(0)) {
+            // Reset movement time if selected object is a goal
+            resetTime = (selectedObject && selectedObject.CompareTag("Goal"));
+
+            ExperimentManager.Instance.targetHit(selectedObject, movementTime);
+
+            if (resetTime)
+                movementTime = 0f;
+
+        }
     }
 
     // Implementation of Bubble Cursor

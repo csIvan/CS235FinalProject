@@ -30,6 +30,7 @@ public class ExperimentManager : MonoBehaviour
     [SerializeField] private Vector2 experimentArea = new Vector2(1000.0f, 1500.0f);
     [SerializeField] private float targetRadius = 5.0f;
     [SerializeField] private float targetMargin = 5.0f;
+    [SerializeField] private float timer = 5.0f;
     [SerializeField] private Cursor[] cursorTypes;
     [SerializeField] private Block trainingBlock;
     [SerializeField] private Block experimentBlock;
@@ -195,10 +196,11 @@ public class ExperimentManager : MonoBehaviour
         return true;
     }
 
-    public void targetHit(GameObject hitObject)
+    public void targetHit(GameObject hitObject, float movementTime)
     {
-        if (hitObject == GoalObject)
+        if (hitObject == GoalObject || movementTime >= timer)
         {
+
             if (currentClick >= experimentBlock.ClicksPerTrial)
             {
                 if (ICurrentTrial.MoveNext())
@@ -209,8 +211,24 @@ public class ExperimentManager : MonoBehaviour
                 currentClick = 0;
             }
 
-            spawnTargets((TrialVars)ICurrentTrial.Current, 25);
-            currentClick++;
+            // Movement Time
+            if (currentClick > 0)
+                Debug.Log(movementTime);
+
+
+            // Check if trial is in the initial state
+            bool initialState = (Targets.Count == 1);
+
+            // If initial target is clicked
+            if (initialState && hitObject != null)        
+                initialState = false;
+
+            
+            if (!initialState) {
+                spawnTargets((TrialVars)ICurrentTrial.Current, 25);
+                currentClick++;
+            }
+            
         }
         else
         {
