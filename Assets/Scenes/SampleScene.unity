@@ -946,6 +946,7 @@ MonoBehaviour:
   experimentArea: {x: 150, y: 100}
   targetRadius: 5
   targetMargin: 5
+  timer: 5
   cursorTypes: 000000000100000002000000
   trainingBlock:
     numDistractors: 25
