@@ -44,6 +44,9 @@ public class ExperimentManager : MonoBehaviour
     private IEnumerator ICurrentTrial;
     private int currentClick = 0;
     private Vector2 lastGoalPos;
+    private Vector2 sliceDir;
+    private Vector2 sliceOrigin;
+    private float sliceAng = 20.0f;
 
     void Awake()
     {
@@ -96,6 +99,11 @@ public class ExperimentManager : MonoBehaviour
             Vector2 randomPos = randomTargetPos();
             // Get the vector from the last goal position to the random point
             Vector2 offset = lastGoalPos - randomPos;
+
+            // Set the slice origin and direction
+            sliceOrigin = lastGoalPos;
+            sliceDir = offset.normalized;
+            
             // Adjust the vector to have the correct amplitude
             offset = offset.normalized * variables.A;
 
@@ -105,15 +113,16 @@ public class ExperimentManager : MonoBehaviour
         } while (!checkInBounds(GoalObject));
 
         // Four Distractors to control Goal Target's Effective Width
-        for (int i = 0; i < 4; i++)
-        {
+        for (int i = 0; i < 4; i++) {
+            GameObject target = InstantiateTarget(distractorPrefab, new Vector2(0.0f, 0.0f), targetRadius);
+
             Vector2 dir = lastGoalPos - (Vector2)GoalObject.transform.localPosition;
             float sign = (GoalObject.transform.localPosition.y < lastGoalPos.y) ? -1.0f : 1.0f;
-            float dist = (targetRadius == variables.W / 2.0f) ? 1.0f : 2.0f;
+            float offset = (targetRadius * 2f) + targetMargin;
 
             float angle = Mathf.Deg2Rad * (Vector2.Angle(Vector2.right, dir) * sign + (90 * i));
-            Vector2 pos2d = new Vector2(Mathf.Sin(angle) * dist, Mathf.Cos(angle) * dist) + (Vector2)GoalObject.transform.localPosition;
-            InstantiateTarget(distractorPrefab, pos2d, targetRadius);
+            Vector2 pos2d = new Vector2(Mathf.Sin(angle) * offset, Mathf.Cos(angle) * offset) + (Vector2)GoalObject.transform.localPosition;
+            target.transform.localPosition = pos2d;
         }
 
         lastGoalPos = GoalObject.transform.localPosition;
@@ -121,13 +130,29 @@ public class ExperimentManager : MonoBehaviour
 
     private void SpawnDistractors(TrialVars variables, int numDistractors)
     {
-        for (int i = 0; i < numDistractors; i++)
-        {
-            GameObject target = InstantiateTarget(distractorPrefab, new Vector2(0.0f, 0.0f), targetRadius);
-            float ScreenOffset = targetRadius * 100.0f;
+        float dist = variables.A - ((targetRadius * 2.0f) + targetMargin / 4.0f) * 2.0f;
+        float spacing = (targetRadius * 2.0f + (targetMargin / 2.0f));
 
-            do
-            {
+        int intermediateDistractors = (variables.D != 0) ? (int)(dist / (spacing / variables.D)) : 0;
+
+        // Spawn intermediate distractors within cone
+        for (int i = 0; i < intermediateDistractors; i++) {
+            GameObject target = InstantiateTarget(distractorPrefab, new Vector2(0.0f, 0.0f), targetRadius);
+            
+            float newSpacing = (spacing / variables.D) * (i + 1);
+            Vector2 perpVec = ((i + 1) % 2 == 0) ? Vector2.Perpendicular(sliceDir) : Vector2.Perpendicular(-sliceDir);
+
+            Vector2 x = sliceOrigin + (sliceDir * newSpacing);
+            Vector2 y = x + (perpVec.normalized * Random.Range(targetRadius / 2.0f, (newSpacing * Mathf.Tan(Mathf.Deg2Rad * (sliceAng / 2.0f)))));
+            target.transform.localPosition = y;
+        }
+
+        // Remaining distractors outside cone
+        numDistractors = (int)(numDistractors * variables.D);
+        for (int i = 0; i < numDistractors; i++) {
+            GameObject target = InstantiateTarget(distractorPrefab, new Vector2(0.0f, 0.0f), targetRadius);
+
+            do {
                 target.transform.localPosition = randomTargetPos();
             } while (checkOverlap(target));
         }

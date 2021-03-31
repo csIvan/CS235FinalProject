@@ -943,7 +943,7 @@ MonoBehaviour:
   pointCursor: {fileID: 1046087751}
   bubbleCursor: {fileID: 640952470}
   ellipseCursor: {fileID: 751806309}
-  experimentArea: {x: 150, y: 100}
+  experimentArea: {x: 300, y: 200}
   targetRadius: 5
   targetMargin: 5
   timer: 5
@@ -961,13 +961,13 @@ MonoBehaviour:
     numDistractors: 25
     clicksPerTrial: 9
     A:
-    - 40
-    - 50
-    - 60
+    - 70
+    - 80
+    - 90
     D:
     - 0
-    - 3
-    - 6
+    - 0.5
+    - 1
     W:
     - 0.4
     - 0.8
