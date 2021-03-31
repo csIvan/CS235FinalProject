@@ -1,40 +1,31 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class PointCursor : MonoBehaviour
 {
     private GameObject selectedObject = null;
-    private float movementTime = 0;
-    private float timer = 5.0f;
-    private bool resetTime = false;
 
     void Update()
     {
-        // Measure movement time
-        movementTime += Time.deltaTime;
-        if (movementTime >= timer) {
-            ExperimentManager.Instance.targetHit(null);
-            movementTime = 0f;
-        }
-
-        GameObject hitObject = checkHit();
+        RaycastHit2D hit = checkHit();
 
         // Cursor is over a target
-        if (hitObject)
+        if (hit && hit.collider != null)
         {
-            selectedObject = hitObject;
-            hitObject.GetComponent<Target>().Selected = true;
+            selectedObject = hit.transform.gameObject;
 
-            if (Input.GetMouseButtonDown(0)) {
-                // Reset movement time if selected object is a goal
-                resetTime = (selectedObject && selectedObject.CompareTag("Goal"));
+            // Get the target script
+            Target targetScript = selectedObject.GetComponent<Target>();
 
-                ExperimentManager.Instance.targetHit(hitObject);
-
-                if (resetTime)
-                    movementTime = 0f;
+            // If the target is not selected, select and animate it
+            if (!targetScript.Selected)
+            {
+                targetScript.Selected = true;
+                targetScript.startAnimation(hit.point);
             }
+
+            // If a target is clicked, report it to the Experiment manager
+            if (Input.GetMouseButtonDown(0))
+                ExperimentManager.Instance.targetHit(selectedObject);
         }
         // Cursor is not over a target
         else if (selectedObject)
@@ -43,16 +34,11 @@ public class PointCursor : MonoBehaviour
         }
     }
 
-    private GameObject checkHit()
+    private RaycastHit2D checkHit()
     {
         Ray mouseRay = Camera.main.ScreenPointToRay(Input.mousePosition);
         int layerMask = ~(LayerMask.GetMask("Target"));
 
-        RaycastHit2D hit = Physics2D.Raycast(mouseRay.origin, mouseRay.direction, layerMask);
-
-        if (hit && hit.collider != null)
-            return hit.transform.gameObject;
-
-        return null;
+        return Physics2D.Raycast(mouseRay.origin, mouseRay.direction, layerMask);
     }
 }

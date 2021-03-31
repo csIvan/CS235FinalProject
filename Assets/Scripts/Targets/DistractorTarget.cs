@@ -23,8 +23,9 @@ public class DistractorTarget : Target
                 centerSpriteRenderer.color = selectedColor;
             else
                 centerSpriteRenderer.color = unselectedColor;
-
+            
             bubbleObject.SetActive(value);
+            selected = value;
         }
     }
 }

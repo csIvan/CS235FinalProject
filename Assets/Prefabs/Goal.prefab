@@ -195,4 +195,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e542c82411358a748bbb50a581838fa7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  radius: 1
+  bubbleScale: 1.3
+  animationSpeed: 5
   bubbleObject: {fileID: 2717505400915392688}

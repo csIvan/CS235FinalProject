@@ -278,7 +278,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 490908135d885084ba591f2a9902603d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  centerObject: {fileID: 3171596956422927831}
+  radius: 1
+  bubbleScale: 1.3
+  animationSpeed: 5
   bubbleObject: {fileID: 1191916805274973081}
+  centerObject: {fileID: 3171596956422927831}
   unselectedColor: {r: 1, g: 1, b: 1, a: 1}
   selectedColor: {r: 1, g: 0, b: 0, a: 1}

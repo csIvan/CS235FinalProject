@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class BubbleCursor : MonoBehaviour
@@ -10,12 +8,6 @@ public class BubbleCursor : MonoBehaviour
 
     private float bubbleRadius = -1.0f;
     private GameObject selectedObject = null;
-    private GameObject bubble = null;
-
-    private float bubbleStartDist = 0.4f;
-    private float bubbleMaxScale = 1.3f;
-    private bool startBubble = false;
-    private bool expandBubble = false;
 
     // Update is called once per frame
     void Update()
@@ -26,7 +18,6 @@ public class BubbleCursor : MonoBehaviour
 
         // Apply Bubble Cursor Algorithm
         BubbleAlgorithm();
-        AnimateBubble();
 
         if (Input.GetMouseButtonDown(0))
             ExperimentManager.Instance.targetHit(selectedObject);
@@ -78,49 +69,21 @@ public class BubbleCursor : MonoBehaviour
     }
 
 
-    private void AnimateBubble() {
-        // Initialize bubble position and scale
-        if (startBubble) {
-            bubble.transform.localScale = Vector2.zero;
-
-            Vector2 dir = transform.localPosition - selectedObject.transform.localPosition;
-            bubble.transform.localPosition = dir.normalized * bubbleStartDist;
-
-            startBubble = false;
-            expandBubble = true;
-        }
-
-        // Animate bubble into position and scale it up
-        if (expandBubble) {
-            if (selectedObject.transform.position != bubble.transform.position) {
-                bubble.transform.localPosition = Vector3.MoveTowards(bubble.transform.localPosition, Vector2.zero, 2 * Time.deltaTime);
-
-                float dist = (bubble.transform.localPosition - Vector3.zero).magnitude;
-                bubble.transform.localScale = new Vector2(bubbleMaxScale - (dist / bubbleStartDist), bubbleMaxScale - (dist / bubbleStartDist));
-            }
-        }
-    }
-
-
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.gameObject.layer == LayerMask.NameToLayer("Target"))
         {
             selectedObject = collision.gameObject;
-            collision.gameObject.GetComponent<Target>().Selected = true;
-            bubble = selectedObject.transform.Find("Bubble").gameObject;
-            startBubble = true;
-        }
-    }
 
-    private void OnTriggerStay2D(Collider2D collision) 
-    {
-        if (collision.gameObject.layer == LayerMask.NameToLayer("Target")) 
-        {
-            selectedObject = collision.gameObject;
-            collision.gameObject.GetComponent<Target>().Selected = true;
-            bubble = selectedObject.transform.Find("Bubble").gameObject;
-            expandBubble = true;
+            // Get the target script
+            Target targetScript = collision.gameObject.GetComponent<Target>();
+
+            // If the target is not selected, select and animate it
+            if (!targetScript.Selected)
+            {
+                targetScript.Selected = true;
+                targetScript.startAnimation(transform.position);
+            }
         }
     }
 
@@ -128,10 +91,9 @@ public class BubbleCursor : MonoBehaviour
     {
         if (collision.gameObject.layer == LayerMask.NameToLayer("Target"))
         {
-            collision.gameObject.GetComponent<Target>().Selected = false;
             selectedObject = null;
-            bubble = null;
-            expandBubble = false;
+
+            collision.gameObject.GetComponent<Target>().Selected = false;
         }
     }
 }
