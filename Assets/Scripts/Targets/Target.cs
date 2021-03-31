@@ -1,8 +1,10 @@
 using UnityEngine;
 
-public abstract class Target : MonoBehaviour
+public class Target : MonoBehaviour
 {
-    protected float radius = 1.0f;
+    [SerializeField] protected GameObject bubbleObject;
+
+    protected float radius = 5.0f;
     protected bool selected = false;
 
     public float Radius
@@ -16,5 +18,16 @@ public abstract class Target : MonoBehaviour
         }
     }
 
-    public abstract bool Selected { get; set; }
+    public virtual bool Selected
+    {
+        get { return selected; } 
+
+        set
+        {
+            if (bubbleObject != null)
+                bubbleObject.SetActive(value);
+
+            selected = value;
+        }
+    }
 }

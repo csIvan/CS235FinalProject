@@ -3,7 +3,6 @@ using UnityEngine;
 public class DistractorTarget : Target
 {
     [SerializeField] private GameObject centerObject;
-    [SerializeField] private GameObject bubbleObject;
     [SerializeField] private Color unselectedColor;
     [SerializeField] private Color selectedColor;
 
