@@ -14,7 +14,7 @@ public class PointCursor : MonoBehaviour
         // Measure movement time
         movementTime += Time.deltaTime;
         if (movementTime >= timer) {
-            ExperimentManager.Instance.targetHit(null, movementTime);
+            ExperimentManager.Instance.targetHit(null);
             movementTime = 0f;
         }
 
@@ -30,7 +30,7 @@ public class PointCursor : MonoBehaviour
                 // Reset movement time if selected object is a goal
                 resetTime = (selectedObject && selectedObject.CompareTag("Goal"));
 
-                ExperimentManager.Instance.targetHit(hitObject, movementTime);
+                ExperimentManager.Instance.targetHit(hitObject);
 
                 if (resetTime)
                     movementTime = 0f;

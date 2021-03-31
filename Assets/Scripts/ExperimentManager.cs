@@ -39,14 +39,20 @@ public class ExperimentManager : MonoBehaviour
     public GameObject GoalObject { get; private set; }
     public List<GameObject> Targets { get; private set; }
 
+    // Trial Management variables
     private IEnumerator ITrainingTrials;
     private IEnumerator IExperimentTrials;
     private IEnumerator ICurrentTrial;
     private int currentClick = 0;
+
+    // Distractor generation variables
     private Vector2 lastGoalPos;
     private Vector2 sliceDir;
     private Vector2 sliceOrigin;
     private float sliceAng = 20.0f;
+
+    // Timer variables
+    private float movementTime = 0;
 
     void Awake()
     {
@@ -64,6 +70,16 @@ public class ExperimentManager : MonoBehaviour
         IExperimentTrials = experimentBlock.GetEnumerator();
         ICurrentTrial = IExperimentTrials;
         startTrial();
+    }
+
+    void Update()
+    {
+        // Update the timer
+        movementTime += Time.deltaTime;
+
+        // If the timer exceeds the limit, move on to the next trial
+        if (movementTime >= timer)
+            Instance.targetHit(null);
     }
 
     private void startTrial()
@@ -221,11 +237,10 @@ public class ExperimentManager : MonoBehaviour
         return true;
     }
 
-    public void targetHit(GameObject hitObject, float movementTime)
+    public void targetHit(GameObject hitObject)
     {
         if (hitObject == GoalObject || movementTime >= timer)
         {
-
             if (currentClick >= experimentBlock.ClicksPerTrial)
             {
                 if (ICurrentTrial.MoveNext())
@@ -240,6 +255,9 @@ public class ExperimentManager : MonoBehaviour
             if (currentClick > 0)
                 Debug.Log(movementTime);
 
+            // Reset the timer
+            movementTime = 0.0f;
+
 
             // Check if trial is in the initial state
             bool initialState = (Targets.Count == 1);
@@ -253,7 +271,6 @@ public class ExperimentManager : MonoBehaviour
                 spawnTargets((TrialVars)ICurrentTrial.Current, 25);
                 currentClick++;
             }
-            
         }
         else
         {
