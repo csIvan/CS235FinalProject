@@ -63,8 +63,9 @@ public class ExperimentManager : MonoBehaviour
 
     void Start()
     {
-        //bubbleCursor.SetActive(true);
-        pointCursor.SetActive(true);
+        //pointCursor.SetActive(true);
+        bubbleCursor.SetActive(true);
+        //ellipseCursor.SetActive(true);
         Targets = new List<GameObject>();
         ITrainingTrials = trainingBlock.GetEnumerator();
         IExperimentTrials = experimentBlock.GetEnumerator();
