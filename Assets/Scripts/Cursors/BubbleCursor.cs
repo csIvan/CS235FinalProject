@@ -74,10 +74,10 @@ public class BubbleCursor : MonoBehaviour
         transform.localScale = new Vector2(bubbleRadius * 2, bubbleRadius * 2);
 
         // Set the new selected target
-        setSelected(closestTarget);
+        setSelected(closestTarget, transform.position);
     }
 
-    private void setSelected(GameObject target)
+    private void setSelected(GameObject target, Vector2 cursorPos)
     {
         // If the given target is already selected, do nothing
         if (target == selectedObject)
@@ -100,7 +100,7 @@ public class BubbleCursor : MonoBehaviour
             if (!targetScript.Selected)
             {
                 targetScript.Selected = true;
-                targetScript.startAnimation(transform.position);
+                targetScript.startAnimation(cursorPos);
             }
         }
     }
