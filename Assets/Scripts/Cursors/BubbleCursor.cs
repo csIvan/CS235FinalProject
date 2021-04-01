@@ -1,30 +1,15 @@
 using UnityEngine;
 
-public class BubbleCursor : MonoBehaviour
+public class BubbleCursor : Cursor
 {
     [SerializeField] private float maxRadius = 100.0f;
     [SerializeField] private float margin = 10f;
     [SerializeField] private float epsilon = 0.1f;
 
     private float bubbleRadius = -1.0f;
-    private GameObject selectedObject = null;
-
-    // Update is called once per frame
-    void Update()
-    {
-        // Area Cursor - use mouse's location to update circle's position
-        Vector2 mouse = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        transform.position = mouse;
-
-        // Apply Bubble Cursor Algorithm
-        BubbleAlgorithm();
-
-        if (Input.GetMouseButtonDown(0))
-            ExperimentManager.Instance.targetHit(selectedObject);
-    }
 
     // Implementation of Bubble Cursor
-    private void BubbleAlgorithm()
+    protected override void updateSelected()
     {
         GameObject closestTarget = null;
         float firstClosest = maxRadius;
@@ -75,33 +60,5 @@ public class BubbleCursor : MonoBehaviour
 
         // Set the new selected target
         setSelected(closestTarget, transform.position);
-    }
-
-    private void setSelected(GameObject target, Vector2 cursorPos)
-    {
-        // If the given target is already selected, do nothing
-        if (target == selectedObject)
-            return;
-
-        // Deselect the current target
-        if (selectedObject)
-            selectedObject.GetComponent<Target>().Selected = false;
-
-        // Set the new selected target
-        selectedObject = target;
-
-        // If a selected target is not null, start its animation
-        if (selectedObject)
-        {
-            // Get the target script of the closest object
-            Target targetScript = selectedObject.GetComponent<Target>();
-
-            // If the target is not selected, select and animate it
-            if (!targetScript.Selected)
-            {
-                targetScript.Selected = true;
-                targetScript.startAnimation(cursorPos);
-            }
-        }
     }
 }
