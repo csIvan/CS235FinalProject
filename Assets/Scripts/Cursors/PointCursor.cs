@@ -4,21 +4,21 @@ public class PointCursor : Cursor
 {
     protected override void updateSelected()
     {
-        RaycastHit2D hit = checkHit();
+        // Check if the cursor is over any of the targets
+        foreach (GameObject target in ExperimentManager.Instance.Targets)
+        {
+            Vector2 distVector = target.transform.localPosition - transform.localPosition;
+            float distSquared = distVector.sqrMagnitude;
+            float targetRadius = target.GetComponent<Target>().Radius;
 
-        // Cursor is over a target
-        if (hit && hit.collider != null)
-            setSelected(hit.transform.gameObject, hit.point);
-        // Cursor is not over a target
-        else
-            setSelected(null, Vector2.zero);
-    }
+            if (distSquared <= targetRadius * targetRadius)
+            {
+                setSelected(target, transform.localPosition);
+                return;
+            }
+        }
 
-    private RaycastHit2D checkHit()
-    {
-        Ray mouseRay = Camera.main.ScreenPointToRay(Input.mousePosition);
-        int layerMask = ~(LayerMask.GetMask("Target"));
-
-        return Physics2D.Raycast(mouseRay.origin, mouseRay.direction, layerMask);
+        // If the cursor isn't over any targets, set the selected object to null
+        setSelected(null, Vector2.zero);
     }
 }
