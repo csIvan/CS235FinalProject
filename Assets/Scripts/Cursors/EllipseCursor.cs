@@ -6,8 +6,7 @@ public class EllipseCursor : Cursor
     [SerializeField] private float margin = 10f;
     [SerializeField] private float epsilon = 0.001f;
 
-    private float minorRadius = 1.0f;
-    private float majorRadius = 2.0f;
+    private Vector2 dimensions = new Vector2(1.0f, 1.0f);
 
     // Implementation of Bubble Cursor
     protected override void updateSelected()
@@ -16,12 +15,15 @@ public class EllipseCursor : Cursor
 
         while (Mathf.Abs(closestDist) > epsilon)
         {
-            minorRadius += closestDist * 0.5f;
-            majorRadius = minorRadius * 0.5f;
+            dimensions.x += closestDist;
+            dimensions.y = dimensions.x * 0.5f;
 
-            transform.localScale = new Vector2(minorRadius * 2.0f, majorRadius * 2.0f);
+            transform.localScale = dimensions;
 
             closestDist = getClosestDist();
+
+            if (dimensions.magnitude > 100000)
+                Debug.Log("test");
         }
     }
 
@@ -32,29 +34,17 @@ public class EllipseCursor : Cursor
         foreach (GameObject target in ExperimentManager.Instance.Targets)
         {
             float targetRadius = target.GetComponent<Target>().Radius;
-            // Transform the point into the local space of the cursor
-            Vector2 localPos = transform.InverseTransformPoint(target.transform.position);
 
-            float magnitude = localPos.magnitude;
+            Matrix4x4 worldToLocalMatrix = Matrix4x4.TRS(transform.localPosition, transform.localRotation, Vector3.one).inverse;
+            Vector2 localPos = worldToLocalMatrix.MultiplyPoint3x4(target.transform.localPosition);
 
-            // If the point is on the ellipse surface, return 0
-            if (magnitude == 0.0f)
-                return 0.0f;
+            float dist = ellipseSDF(localPos, dimensions / 2.0f) + targetRadius;
 
-            // Get the closest point to the target on the ellipse (in local space)
-            localPos /= magnitude;
-
-            // Transform the closest point into world space
-            Vector2 closestPoint = transform.TransformPoint(localPos);
-            closestPoint = transform.parent.InverseTransformPoint(closestPoint);
-
-            //Get the distance between the closest point on the ellipse and the target
-            Vector2 diffVector = (Vector2)target.transform.localPosition - closestPoint;
-            closestDist = diffVector.magnitude;
-
-            // If the point is inside the ellipse, negate the distance
-            if (magnitude < 1.0f)
-                closestDist = -closestDist;
+            if (dist < closestDist)
+            {
+                closestDist = dist;
+                setSelected(target, transform.position);
+            }
         }
 
         return closestDist;
@@ -62,10 +52,15 @@ public class EllipseCursor : Cursor
 
     // A signed distance function defining an ellipse
     // Code from: https://iquilezles.org/www/articles/ellipsoids/ellipsoids.htm
-    private float ellipseSDF(Vector2 point, Vector2 dimensions)
+    private float ellipseSDF(Vector2 point, Vector2 radii)
     {
-        float k1 = (point / dimensions).magnitude;
-        float k2 = (point / (dimensions * dimensions)).magnitude;
-        return k1 * (k1 - 1.0f) / k2;
+        float k1 = (point / radii).magnitude;
+        float k2 = (point / (radii * radii)).magnitude;
+        float dist = k1 * (k1 - 1.0f) / k2;
+
+        if (dist != float.NaN)
+            return dist;
+        else
+            return radii.magnitude;
     }
 }
