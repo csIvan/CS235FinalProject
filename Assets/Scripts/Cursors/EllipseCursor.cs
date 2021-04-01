@@ -3,7 +3,7 @@ using UnityEngine;
 public class EllipseCursor : Cursor
 {
     [SerializeField] private float maxRadius = 100.0f;
-    [SerializeField] private float margin = 10f;
+    [SerializeField] private float margin = 10.0f;
     [SerializeField] private float epsilon = 0.001f;
 
     private Vector2 dimensions = new Vector2(1.0f, 1.0f);
@@ -21,9 +21,6 @@ public class EllipseCursor : Cursor
             transform.localScale = dimensions;
 
             closestDist = getClosestDist();
-
-            if (dimensions.magnitude > 100000)
-                Debug.Log("test");
         }
     }
 
@@ -54,13 +51,11 @@ public class EllipseCursor : Cursor
     // Code from: https://iquilezles.org/www/articles/ellipsoids/ellipsoids.htm
     private float ellipseSDF(Vector2 point, Vector2 radii)
     {
+        if (point.magnitude < epsilon)
+            return Mathf.Min(-radii.x, -radii.y);
+
         float k1 = (point / radii).magnitude;
         float k2 = (point / (radii * radii)).magnitude;
-        float dist = k1 * (k1 - 1.0f) / k2;
-
-        if (dist != float.NaN)
-            return dist;
-        else
-            return radii.magnitude;
+        return k1 * (k1 - 1.0f) / k2;
     }
 }
