@@ -1,33 +1,42 @@
+using System;
 using UnityEngine;
 
 public class EllipseCursor : Cursor
 {
     [SerializeField] private float maxRadius = 100.0f;
     [SerializeField] private float margin = 1.0f;
-    [SerializeField] private float epsilon = 0.1f;
+    [SerializeField] private float maxError = 0.1f;
 
     private Vector2 dimensions = new Vector2(1.0f, 1.0f);
 
     // Implementation of Bubble Cursor
     protected override void updateSelected()
     {
-        float closestDist = getClosestDist();
+        Tuple<GameObject, float> closestTarget = getClosestDist();
 
-        while (Mathf.Abs(closestDist) > epsilon)
+        // Recursively adjust the size of the ellipse
+        while (Mathf.Abs(closestTarget.Item2) > maxError)
         {
-            dimensions.x += closestDist;
+            dimensions.x += closestTarget.Item2;
             dimensions.y = dimensions.x * 0.5f;
 
-            transform.localScale = dimensions;
-
-            closestDist = getClosestDist();
+            closestTarget = getClosestDist();
         }
+
+        // Set the scale of the ellipse
+        transform.localScale = dimensions;
+        // Select the closest target
+        setSelected(closestTarget.Item1, transform.position);
     }
 
-    private float getClosestDist()
+    private Tuple<GameObject, float> getClosestDist()
     {
-        float closestDist = maxRadius;
+        GameObject closestTarget = null;
+        float firstClosest = maxRadius;
+        float secondClosest = maxRadius;
+        float firstClosestRadius = 0.0f;
 
+        // Find closest and second closest targets
         foreach (GameObject target in ExperimentManager.Instance.Targets)
         {
             float targetRadius = target.GetComponent<Target>().Radius;
@@ -35,23 +44,51 @@ public class EllipseCursor : Cursor
             Matrix4x4 worldToLocalMatrix = Matrix4x4.TRS(transform.localPosition, transform.localRotation, Vector3.one).inverse;
             Vector2 localPos = worldToLocalMatrix.MultiplyPoint3x4(target.transform.localPosition);
 
-            float dist = ellipseSDF(localPos, dimensions / 2.0f) + targetRadius;
+            float distance = ellipseSDF(localPos, dimensions / 2.0f) - targetRadius;
 
-            if (dist < closestDist)
+            // Current target is the closest
+            if (distance < firstClosest)
             {
-                closestDist = dist;
-                setSelected(target, transform.position);
+                // The previous closest target is not the second target
+                secondClosest = firstClosest;
+
+                // The current target is the new closest
+                closestTarget = target;
+                firstClosest = distance;
+                firstClosestRadius = targetRadius;
+            }
+            // Current target is the second closest
+            else if (distance < secondClosest)
+            {
+                secondClosest = distance;
             }
         }
 
-        return closestDist;
+        // The distance that covers the closest target the most
+        // without covering any of the other targets
+        float adjustedDist;
+
+        // Ellipse fully encapsulates the closest target
+        if (firstClosest + (firstClosestRadius * 2) < secondClosest - margin)
+            adjustedDist = firstClosest + (firstClosestRadius * 2);
+        // Ellipse extends until the margin of the second closest target
+        else if (secondClosest - margin > firstClosest + margin)
+            adjustedDist = secondClosest - margin;
+        // Ellipse extends until it touches the closest target plus some margin
+        else if (firstClosest + margin < secondClosest)
+            adjustedDist = firstClosest + margin;
+        // Ellipse extends until it touches the second closest target
+        else
+            adjustedDist = secondClosest;
+
+        return new Tuple<GameObject, float>(closestTarget, adjustedDist);
     }
 
     // A signed distance function defining an ellipse
     // Code from: https://iquilezles.org/www/articles/ellipsoids/ellipsoids.htm
     private float ellipseSDF(Vector2 point, Vector2 radii)
     {
-        if (point.magnitude < epsilon)
+        if (point.magnitude < maxError)
             return Mathf.Min(-radii.x, -radii.y);
 
         float k1 = (point / radii).magnitude;

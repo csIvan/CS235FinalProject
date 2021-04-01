@@ -23,7 +23,7 @@ public class BubbleCursor : Cursor
             float distance = diffVector.magnitude - targetRadius;
 
             // Current target is the closest
-            if (distance < firstClosest && distance <= maxRadius)
+            if (distance < firstClosest)
             {
                 // The previous closest target is not the second target
                 secondClosest = firstClosest;
