@@ -3,8 +3,8 @@ using UnityEngine;
 public class EllipseCursor : Cursor
 {
     [SerializeField] private float maxRadius = 100.0f;
-    [SerializeField] private float margin = 10.0f;
-    [SerializeField] private float epsilon = 0.001f;
+    [SerializeField] private float margin = 1.0f;
+    [SerializeField] private float epsilon = 0.1f;
 
     private Vector2 dimensions = new Vector2(1.0f, 1.0f);
 

@@ -440,8 +440,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxRadius: 100
-  margin: 0.1
-  epsilon: 0.001
+  margin: 1
 --- !u!1 &751806309
 GameObject:
   m_ObjectHideFlags: 0
@@ -487,8 +486,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxRadius: 100
-  margin: 0.1
-  epsilon: 0.001
+  margin: 1
+  epsilon: 0.1
 --- !u!212 &751806314
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -871,7 +870,7 @@ MonoBehaviour:
   experimentArea: {x: 300, y: 200}
   targetRadius: 5
   targetMargin: 5
-  timer: 5
+  timer: 100
   cursorTypes: 000000000100000002000000
   trainingBlock:
     numDistractors: 25

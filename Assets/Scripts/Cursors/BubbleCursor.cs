@@ -3,8 +3,7 @@ using UnityEngine;
 public class BubbleCursor : Cursor
 {
     [SerializeField] private float maxRadius = 100.0f;
-    [SerializeField] private float margin = 10f;
-    [SerializeField] private float epsilon = 0.1f;
+    [SerializeField] private float margin = 1.0f;
 
     private float bubbleRadius = -1.0f;
 
@@ -14,8 +13,7 @@ public class BubbleCursor : Cursor
         GameObject closestTarget = null;
         float firstClosest = maxRadius;
         float secondClosest = maxRadius;
-        float firstTargetRadius = 0.0f;
-        float secondTargetRadius = 0.0f;
+        float firstClosestRadius = 0.0f;
         
         // Find closest and second closest targets
         foreach (GameObject target in ExperimentManager.Instance.Targets)
@@ -24,36 +22,36 @@ public class BubbleCursor : Cursor
             Vector2 diffVector = transform.localPosition - target.transform.localPosition;
             float distance = diffVector.magnitude - targetRadius;
 
-            if (distance < firstClosest)
+            // Current target is the closest
+            if (distance < firstClosest && distance <= maxRadius)
             {
                 // The previous closest target is not the second target
                 secondClosest = firstClosest;
-                secondTargetRadius = firstTargetRadius;
 
                 // The current target is the new closest
                 closestTarget = target;
                 firstClosest = distance;
-                firstTargetRadius = targetRadius;
+                firstClosestRadius = targetRadius;
             }
+            // Current target is the second closest
             else if (distance < secondClosest)
             {
                 secondClosest = distance;
-                secondTargetRadius = targetRadius;
             }
         }
 
         // Bubble fully encapsulates the closest target
-        if (firstClosest + (firstTargetRadius * 2) < secondClosest - margin)
-            bubbleRadius = firstClosest + (firstTargetRadius * 2);
+        if (firstClosest + (firstClosestRadius * 2) < secondClosest - margin)
+            bubbleRadius = firstClosest + (firstClosestRadius * 2);
         // Bubble extends until the margin of the second closest target
-        else if (firstClosest + margin < secondClosest - margin)
+        else if (secondClosest - margin > firstClosest + margin)
             bubbleRadius = secondClosest - margin;
         // Bubble extends until it touches the closest target plus some margin
         else if (firstClosest + margin < secondClosest)
             bubbleRadius = firstClosest + margin;
-        // Bubble extends until it almost touches the second closest target
+        // Bubble extends until it touches the second closest target
         else
-            bubbleRadius = secondClosest - epsilon;
+            bubbleRadius = secondClosest;
 
         // Set the scale of the cursor
         transform.localScale = new Vector2(bubbleRadius * 2, bubbleRadius * 2);
