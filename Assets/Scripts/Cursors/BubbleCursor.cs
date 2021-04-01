@@ -26,6 +26,7 @@ public class BubbleCursor : MonoBehaviour
     // Implementation of Bubble Cursor
     private void BubbleAlgorithm()
     {
+        GameObject closestTarget = null;
         float firstClosest = maxRadius;
         float secondClosest = maxRadius;
         float firstTargetRadius = 0.0f;
@@ -40,8 +41,12 @@ public class BubbleCursor : MonoBehaviour
 
             if (distance < firstClosest)
             {
+                // The previous closest target is not the second target
                 secondClosest = firstClosest;
                 secondTargetRadius = firstTargetRadius;
+
+                // The current target is the new closest
+                closestTarget = target;
                 firstClosest = distance;
                 firstTargetRadius = targetRadius;
             }
@@ -61,22 +66,35 @@ public class BubbleCursor : MonoBehaviour
         // Bubble extends until it touches the closest target plus some margin
         else if (firstClosest + margin < secondClosest)
             bubbleRadius = firstClosest + margin;
-        //Bubble extends until it almost touches the second closest target
+        // Bubble extends until it almost touches the second closest target
         else
             bubbleRadius = secondClosest - epsilon;
 
+        // Set the scale of the cursor
         transform.localScale = new Vector2(bubbleRadius * 2, bubbleRadius * 2);
+
+        // Set the new selected target
+        setSelected(closestTarget);
     }
 
-
-    private void OnTriggerEnter2D(Collider2D collision)
+    private void setSelected(GameObject target)
     {
-        if (collision.gameObject.layer == LayerMask.NameToLayer("Target"))
-        {
-            selectedObject = collision.gameObject;
+        // If the given target is already selected, do nothing
+        if (target == selectedObject)
+            return;
 
-            // Get the target script
-            Target targetScript = collision.gameObject.GetComponent<Target>();
+        // Deselect the current target
+        if (selectedObject)
+            selectedObject.GetComponent<Target>().Selected = false;
+
+        // Set the new selected target
+        selectedObject = target;
+
+        // If a selected target is not null, start its animation
+        if (selectedObject)
+        {
+            // Get the target script of the closest object
+            Target targetScript = selectedObject.GetComponent<Target>();
 
             // If the target is not selected, select and animate it
             if (!targetScript.Selected)
@@ -84,16 +102,6 @@ public class BubbleCursor : MonoBehaviour
                 targetScript.Selected = true;
                 targetScript.startAnimation(transform.position);
             }
-        }
-    }
-
-    private void OnTriggerExit2D(Collider2D collision)
-    {
-        if (collision.gameObject.layer == LayerMask.NameToLayer("Target"))
-        {
-            selectedObject = null;
-
-            collision.gameObject.GetComponent<Target>().Selected = false;
         }
     }
 }
