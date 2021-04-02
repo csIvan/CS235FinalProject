@@ -17,7 +17,8 @@ public class EllipseCursor : Cursor
     // On the first frame, the previous position is set to the current position
     void Start()
     {
-        prevPos = transform.position;
+        updatePosition();
+        currPos = transform.position;
     }
 
     // Implementation of Bubble Cursor

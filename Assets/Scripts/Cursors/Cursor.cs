@@ -15,7 +15,7 @@ public abstract class Cursor : MonoBehaviour
     }
 
     // Move the cursor to the mouse position
-    private void updatePosition()
+    protected void updatePosition()
     {
         Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         transform.position = new Vector3(mousePos.x, mousePos.y, transform.position.z);
