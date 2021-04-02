@@ -17,10 +17,23 @@ public class EllipseCursor : Cursor
         // Recursively adjust the size of the ellipse
         while (Mathf.Abs(closestTarget.Item2) > maxError)
         {
-            dimensions.x += closestTarget.Item2;
-            dimensions.y = dimensions.x * 0.5f;
+            dimensions.y += closestTarget.Item2;
+            dimensions.x = dimensions.y * 1.5f;
 
             closestTarget = getClosestDist();
+        }
+
+        if (dimensions.y > maxRadius)
+        {
+            dimensions.y = maxRadius;
+            dimensions.x = dimensions.y * 1.5f;
+
+            Matrix4x4 worldToLocalMatrix = Matrix4x4.TRS(transform.localPosition, transform.localRotation, Vector3.one).inverse;
+            Vector2 localPos = worldToLocalMatrix.MultiplyPoint3x4(closestTarget.Item1.transform.position);
+            float newDist = ellipseSDF(localPos, dimensions * 0.5f);
+
+            if (newDist > closestTarget.Item1.GetComponent<Target>().Radius)
+                closestTarget = new Tuple<GameObject, float>(null, 0.0f);
         }
 
         // Set the scale of the ellipse
@@ -32,8 +45,8 @@ public class EllipseCursor : Cursor
     private Tuple<GameObject, float> getClosestDist()
     {
         GameObject closestTarget = null;
-        float firstClosest = maxRadius;
-        float secondClosest = maxRadius;
+        float firstClosest = float.PositiveInfinity;
+        float secondClosest = float.PositiveInfinity;
         float firstClosestRadius = 0.0f;
 
         // Find closest and second closest targets
@@ -44,7 +57,7 @@ public class EllipseCursor : Cursor
             Matrix4x4 worldToLocalMatrix = Matrix4x4.TRS(transform.localPosition, transform.localRotation, Vector3.one).inverse;
             Vector2 localPos = worldToLocalMatrix.MultiplyPoint3x4(target.transform.localPosition);
 
-            float distance = ellipseSDF(localPos, dimensions / 2.0f) - targetRadius;
+            float distance = ellipseSDF(localPos, dimensions * 0.5f) - targetRadius;
 
             // Current target is the closest
             if (distance < firstClosest)
