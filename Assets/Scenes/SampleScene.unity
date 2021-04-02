@@ -486,6 +486,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxRadius: 100
+  maxRadiusRatio: 5
+  maxSpeed: 500
   margin: 1
   maxError: 0.1
 --- !u!212 &751806314

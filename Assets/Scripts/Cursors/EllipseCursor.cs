@@ -4,25 +4,77 @@ using UnityEngine;
 public class EllipseCursor : Cursor
 {
     [SerializeField] private float maxRadius = 100.0f;
+    [SerializeField] private float maxRadiusRatio = 5.0f;
+    [SerializeField] private float maxSpeed = 500.0f;
     [SerializeField] private float margin = 1.0f;
     [SerializeField] private float maxError = 0.1f;
 
     private Vector2 dimensions = new Vector2(1.0f, 1.0f);
+    private Vector2 prevPos, currPos;
+    private float radiusRatio = 1.0f;
     private Matrix4x4 worldToLocalUnscaled;
+
+    // On the first frame, the previous position is set to the current position
+    void Start()
+    {
+        prevPos = transform.position;
+    }
 
     // Implementation of Bubble Cursor
     protected override void updateSelected()
     {
-        // Update the transform matrix
+        updateTransform();
         updateMatrix();
+        updateDimensions();
+    }
+
+    // Update the rotation and radius ratio of the ellipse
+    private void updateTransform()
+    {
+        // Update the positions
+        prevPos = currPos;
+        currPos = transform.position;
+        // Calculate the speed of the cursor
+        Vector2 velocity = (currPos - prevPos) / Time.deltaTime;
+        float speed = velocity.magnitude;
+
+        // If the cursor isn't moving, then the cursor should be a sphere
+        if (speed == 0.0f)
+        {
+            radiusRatio = 1.0f;
+            return;
+        }
+
+        // Rotate the ellipse
+        transform.right = (Vector2)transform.position + velocity;
+        // Set the ellipse radius ratio
+        radiusRatio = mapf(speed, 0.0f, maxSpeed, 1.0f, maxRadiusRatio);
+    }
+
+    private float mapf(float value, float fromMin, float fromMax, float toMin, float toMax)
+    {
+        if (value < fromMin)
+            return toMin;
+        if (value > fromMax)
+            return toMax;
+        else
+        {
+            float range = (value - fromMin) / (fromMax - fromMin);
+            return (range * (toMax - toMin)) + toMin;
+        }
+    }
+
+    // Adjust the dimensions so that the ellipse covers the closest target
+    private void updateDimensions()
+    {
         // Calculate the initial distance
         Tuple<GameObject, float> closestTarget = getClosestDist();
 
-        // Recursively adjust the size of the ellipse until it reaches the target
+        // Iteratively adjust the size of the ellipse until it reaches the target
         while (Mathf.Abs(closestTarget.Item2) > maxError)
         {
             dimensions.y += closestTarget.Item2;
-            dimensions.x = dimensions.y * 1.5f;
+            dimensions.x = dimensions.y * radiusRatio;
 
             closestTarget = getClosestDist();
         }
@@ -32,7 +84,7 @@ public class EllipseCursor : Cursor
         {
             // Set the dimensions to the maximum
             dimensions.y = maxRadius;
-            dimensions.x = dimensions.y * 1.5f;
+            dimensions.x = dimensions.y * radiusRatio;
 
             // Compute the new distance to the closest target
             float newDist = sdf(closestTarget.Item1.transform.position);
