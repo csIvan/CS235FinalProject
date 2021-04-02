@@ -8,13 +8,17 @@ public class EllipseCursor : Cursor
     [SerializeField] private float maxError = 0.1f;
 
     private Vector2 dimensions = new Vector2(1.0f, 1.0f);
+    private Matrix4x4 worldToLocalUnscaled;
 
     // Implementation of Bubble Cursor
     protected override void updateSelected()
     {
+        // Update the transform matrix
+        updateMatrix();
+        // Calculate the initial distance
         Tuple<GameObject, float> closestTarget = getClosestDist();
 
-        // Recursively adjust the size of the ellipse
+        // Recursively adjust the size of the ellipse until it reaches the target
         while (Mathf.Abs(closestTarget.Item2) > maxError)
         {
             dimensions.y += closestTarget.Item2;
@@ -23,15 +27,17 @@ public class EllipseCursor : Cursor
             closestTarget = getClosestDist();
         }
 
+        // Restrict the size if it is too large
         if (dimensions.y > maxRadius)
         {
+            // Set the dimensions to the maximum
             dimensions.y = maxRadius;
             dimensions.x = dimensions.y * 1.5f;
 
-            Matrix4x4 worldToLocalMatrix = Matrix4x4.TRS(transform.localPosition, transform.localRotation, Vector3.one).inverse;
-            Vector2 localPos = worldToLocalMatrix.MultiplyPoint3x4(closestTarget.Item1.transform.position);
-            float newDist = ellipseSDF(localPos, dimensions * 0.5f);
+            // Compute the new distance to the closest target
+            float newDist = sdf(closestTarget.Item1.transform.position);
 
+            // If the target is not encapsulated, don't select it
             if (newDist > closestTarget.Item1.GetComponent<Target>().Radius)
                 closestTarget = new Tuple<GameObject, float>(null, 0.0f);
         }
@@ -42,6 +48,13 @@ public class EllipseCursor : Cursor
         setSelected(closestTarget.Item1, transform.position);
     }
 
+    // Recalculate the unscaled World-To-Local space transform matrix
+    private void updateMatrix()
+    {
+        worldToLocalUnscaled = Matrix4x4.TRS(transform.localPosition, transform.localRotation, Vector3.one).inverse;
+    }
+
+    // Returns the maximum allowed distance between the closest target and the ellipse
     private Tuple<GameObject, float> getClosestDist()
     {
         GameObject closestTarget = null;
@@ -53,11 +66,7 @@ public class EllipseCursor : Cursor
         foreach (GameObject target in ExperimentManager.Instance.Targets)
         {
             float targetRadius = target.GetComponent<Target>().Radius;
-
-            Matrix4x4 worldToLocalMatrix = Matrix4x4.TRS(transform.localPosition, transform.localRotation, Vector3.one).inverse;
-            Vector2 localPos = worldToLocalMatrix.MultiplyPoint3x4(target.transform.localPosition);
-
-            float distance = ellipseSDF(localPos, dimensions * 0.5f) - targetRadius;
+            float distance = sdf(target.transform.localPosition) - targetRadius;
 
             // Current target is the closest
             if (distance < firstClosest)
@@ -99,13 +108,16 @@ public class EllipseCursor : Cursor
 
     // A signed distance function defining an ellipse
     // Code from: https://iquilezles.org/www/articles/ellipsoids/ellipsoids.htm
-    private float ellipseSDF(Vector2 point, Vector2 radii)
+    private float sdf(Vector2 point)
     {
-        if (point.magnitude < maxError)
+        Vector2 radii = dimensions * 0.5f;
+        Vector2 localPoint = worldToLocalUnscaled.MultiplyPoint3x4(point);
+
+        if (localPoint.magnitude < maxError)
             return Mathf.Min(-radii.x, -radii.y);
 
-        float k1 = (point / radii).magnitude;
-        float k2 = (point / (radii * radii)).magnitude;
+        float k1 = (localPoint / radii).magnitude;
+        float k2 = (localPoint / (radii * radii)).magnitude;
         return k1 * (k1 - 1.0f) / k2;
     }
 }
