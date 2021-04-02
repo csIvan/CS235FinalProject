@@ -7,11 +7,15 @@ public abstract class Cursor : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        updatePosition();
-        updateSelected();
-
         if (Input.GetMouseButtonDown(0))
             ExperimentManager.Instance.targetHit(selectedObject);
+    }
+
+    // Fixed Update is called 50 times per frame
+    void FixedUpdate()
+    {
+        updatePosition();
+        updateSelected();
     }
 
     // Move the cursor to the mouse position

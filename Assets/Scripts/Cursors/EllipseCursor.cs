@@ -5,7 +5,7 @@ public class EllipseCursor : Cursor
 {
     [SerializeField] private float maxRadius = 100.0f;
     [SerializeField] private float maxRadiusRatio = 5.0f;
-    [SerializeField] private float maxSpeed = 500.0f;
+    [SerializeField] private float maxSpeed = 3.0f;
     [SerializeField] private float margin = 1.0f;
     [SerializeField] private float maxError = 0.1f;
 
@@ -36,7 +36,7 @@ public class EllipseCursor : Cursor
         prevPos = currPos;
         currPos = transform.position;
         // Calculate the speed of the cursor
-        Vector2 velocity = (currPos - prevPos) / Time.deltaTime;
+        Vector2 velocity = (currPos - prevPos);
         float speed = velocity.magnitude;
 
         // If the cursor isn't moving, then the cursor should be a sphere
@@ -47,7 +47,7 @@ public class EllipseCursor : Cursor
         }
 
         // Rotate the ellipse
-        transform.right = (Vector2)transform.position + velocity;
+        transform.right = velocity;
         // Set the ellipse radius ratio
         radiusRatio = mapf(speed, 0.0f, maxSpeed, 1.0f, maxRadiusRatio);
     }
