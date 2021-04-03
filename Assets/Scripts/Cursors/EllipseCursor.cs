@@ -74,7 +74,7 @@ public class EllipseCursor : Cursor
         // Iteratively adjust the size of the ellipse until it reaches the target
         while (Mathf.Abs(closestTarget.Item2) > maxError)
         {
-            dimensions.y += closestTarget.Item2;
+            dimensions.y += closestTarget.Item2 * 0.5f;
             dimensions.x = dimensions.y * radiusRatio;
 
             closestTarget = getClosestDist();
