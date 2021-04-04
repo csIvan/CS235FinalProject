@@ -131,7 +131,7 @@ public class TargetManager : MonoBehaviour
 
     private void SpawnDistractors(TrialVars variables)
     {
-        float dist = variables.A - ((targetRadius * 2.0f) + targetMargin / 4.0f) * 2.0f;
+        float dist = variables.A - ((targetRadius * 2.0f) + targetMargin) * 2.0f - (targetRadius * 0.5f);
         float spacing = (targetRadius * 2.0f + (targetMargin * 0.5f));
 
         // Distractors in the cone
