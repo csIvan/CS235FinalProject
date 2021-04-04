@@ -163,14 +163,24 @@ public class EllipseCursor : Cursor
     // Code from: https://iquilezles.org/www/articles/ellipsoids/ellipsoids.htm
     private float sdf(Vector2 point)
     {
-        Vector2 radii = dimensions * 0.5f;
-        Vector2 localPoint = worldToLocalUnscaled.MultiplyPoint3x4(point);
+        // Transform the point into the local space of the ellipse,
+        // where the ellipse is a unit circle
+        Vector2 offsetVec = worldToLocalUnscaled.MultiplyPoint3x4(point);
+        offsetVec /= dimensions;
 
-        if (localPoint.magnitude < maxError)
-            return Mathf.Min(-radii.x, -radii.y);
+        // Subtract the radius of the unit circle from the
+        // distance between the circle center and the point
+        float distance = offsetVec.magnitude - 0.5f;
+        // Store the sign of the magnitude
+        float sign = Mathf.Sign(distance);
 
-        float k1 = (localPoint / radii).magnitude;
-        float k2 = (localPoint / (radii * radii)).magnitude;
-        return k1 * (k1 - 1.0f) / k2;
+        // Scale the vector so that it points from the
+        // closest point on the ellipse to the given point
+        offsetVec = offsetVec.normalized * distance;
+
+        // Transform the scale of the vector back into canvas space
+        offsetVec *= dimensions;
+
+        return offsetVec.magnitude * sign;
     }
 }
