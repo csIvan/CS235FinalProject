@@ -9,6 +9,9 @@ public class EllipseCursor : Cursor
     [SerializeField] private float margin = 1.0f;
     [SerializeField] private float maxError = 0.1f;
 
+    [SerializeField] private float ratioLerpUpInterval;
+    [SerializeField] private float ratioLerpDownInterval;
+
     private Vector2 dimensions = new Vector2(1.0f, 1.0f);
     private Vector2 prevPos, currPos;
     private float radiusRatio = 1.0f;
@@ -39,18 +42,23 @@ public class EllipseCursor : Cursor
         Vector2 velocity = (currPos - prevPos);
         float speed = velocity.magnitude;
 
-        // If the cursor isn't moving, then the cursor should be a sphere
-        if (speed == 0.0f)
-        {
-            radiusRatio = 1.0f;
-            dimensions.x = dimensions.y;
-            return;
-        }
+        float targetRadiusRatio;
 
-        // Rotate the ellipse
-        transform.right = velocity;
+        // Only update the rotation when the cursor is moving
+        if (speed != 0.0f)
+            transform.right = velocity;
+
         // Set the ellipse radius ratio
-        radiusRatio = mapf(speed, 0.0f, maxSpeed, 1.0f, maxRadiusRatio);
+        targetRadiusRatio = mapf(speed, 0.0f, maxSpeed, 1.0f, maxRadiusRatio);
+
+        // Lerp the radius ratio towards the target
+        if (radiusRatio > targetRadiusRatio)
+            radiusRatio = Mathf.Lerp(radiusRatio, targetRadiusRatio, ratioLerpDownInterval);
+        else
+            radiusRatio = Mathf.Lerp(radiusRatio, targetRadiusRatio, ratioLerpUpInterval);
+
+        // Apply the ratio to the ellipse
+        dimensions.x = dimensions.y * radiusRatio;
     }
 
     private float mapf(float value, float fromMin, float fromMax, float toMin, float toMax)

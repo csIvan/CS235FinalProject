@@ -65,7 +65,7 @@ public class ExperimentManager : MonoBehaviour
         startTrial();
 
         // Set the first cursor type
-        CursorType cursorType = (CursorType)randomCursors[currentCursor];
+        CursorType cursorType = (CursorType.Ellipse);
         CursorManager.Instance.cursorType = cursorType;
 
         // Store the current time

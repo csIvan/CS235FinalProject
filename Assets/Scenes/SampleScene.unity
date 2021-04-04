@@ -619,6 +619,8 @@ MonoBehaviour:
   maxSpeed: 20
   margin: 1
   maxError: 0.1
+  ratioLerpUpInterval: 0.6
+  ratioLerpDownInterval: 0.15
 --- !u!212 &751806314
 SpriteRenderer:
   m_ObjectHideFlags: 0
