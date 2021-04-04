@@ -997,16 +997,16 @@ MonoBehaviour:
   cursorTypes: 000000000100000002000000
   trainingBlock:
     numDistractors: 25
-    clicksPerTrial: 9
+    clicksPerTrial: 10
     A:
-    - 70
+    - 90
     D:
-    - 0.5
+    - 1
     W:
     - 0.4
   experimentBlock:
     numDistractors: 25
-    clicksPerTrial: 9
+    clicksPerTrial: 5
     A:
     - 70
     - 80
@@ -1016,9 +1016,7 @@ MonoBehaviour:
     - 0.5
     - 1
     W:
-    - 0.4
-    - 0.8
-    - 1.2
+    - 1
 --- !u!4 &1579119745
 Transform:
   m_ObjectHideFlags: 0
