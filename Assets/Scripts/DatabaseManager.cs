@@ -3,13 +3,14 @@ using UnityEngine;
 
 public class DatabaseManager : MonoBehaviour
 {
+
+    // A self-reference to the singleton instance of this script
+    public static DatabaseManager Instance { get; private set; }
+
     [SerializeField] private string path = "Experiment Data";
     [SerializeField] private GameObject displayObject;
     [SerializeField] private string callbackMethodName;
     [SerializeField] private string fallbackMethodName;
-
-    // A self-reference to the singleton instance of this script
-    public static DatabaseManager Instance { get; private set; }
 
     void Awake()
     {

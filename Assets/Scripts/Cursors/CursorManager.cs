@@ -2,15 +2,15 @@ using UnityEngine;
 
 public class CursorManager : MonoBehaviour
 {
+    // A self-reference to the singleton instance of this script
+    public static CursorManager Instance { get; private set; }
+
     [SerializeField] private GameObject pointCursor;
     [SerializeField] private GameObject bubbleCursor;
     [SerializeField] private GameObject ellipseCursor;
     [SerializeField] private Texture2D cursorTexture;
 
     private GameObject currentCursor;
-
-    // A self-reference to the singleton instance of this script
-    public static CursorManager Instance { get; private set; }
 
 
     void Awake()

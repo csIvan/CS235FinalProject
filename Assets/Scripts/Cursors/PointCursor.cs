@@ -5,7 +5,7 @@ public class PointCursor : Cursor
     protected override void updateSelected()
     {
         // Check if the cursor is over any of the targets
-        foreach (GameObject target in ExperimentManager.Instance.Targets)
+        foreach (GameObject target in TargetManager.Instance.Targets)
         {
             Vector2 distVector = target.transform.localPosition - transform.localPosition;
             float distSquared = distVector.sqrMagnitude;

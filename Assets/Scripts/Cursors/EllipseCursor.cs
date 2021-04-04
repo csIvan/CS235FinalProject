@@ -116,7 +116,7 @@ public class EllipseCursor : Cursor
         float firstClosestRadius = 0.0f;
 
         // Find closest and second closest targets
-        foreach (GameObject target in ExperimentManager.Instance.Targets)
+        foreach (GameObject target in TargetManager.Instance.Targets)
         {
             float targetRadius = target.GetComponent<Target>().Radius;
             float distance = sdf(target.transform.localPosition) - targetRadius;
