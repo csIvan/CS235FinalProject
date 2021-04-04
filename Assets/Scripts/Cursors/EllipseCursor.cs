@@ -80,13 +80,25 @@ public class EllipseCursor : Cursor
         // Otherwise size the dimensions to encapsulate the closest target
         else
         {
+            int iteration = 0;
+
             // Iteratively adjust the size of the ellipse until it reaches the target
             while (Mathf.Abs(closestTarget.Item2) > maxError)
             {
+                // Prevent an infinite loop
+                if (iteration > 100)
+                {
+                    dimensions.x = 1.0f;
+                    dimensions.y = 1.0f;
+                    break;
+                }
+
                 dimensions.y += closestTarget.Item2 * 0.5f;
                 dimensions.x = dimensions.y * radiusRatio;
 
                 closestTarget = getClosestDist();
+
+                iteration++;
             }
 
             // Restrict the size if it is too large
