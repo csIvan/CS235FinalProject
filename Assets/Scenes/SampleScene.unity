@@ -376,9 +376,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   goalPrefab: {fileID: 7610662509062196790, guid: 2171f57176501fd42bc2296ef6fd2cea, type: 3}
   distractorPrefab: {fileID: 6675055917911164191, guid: 86603f6bcee091c4aa8a75d3393f6049, type: 3}
-  experimentArea: {x: 300, y: 200}
+  experimentBounds: {x: 250, y: 150}
   targetRadius: 5
   targetMargin: 5
+  distractorConeAngle: 20
 --- !u!1 &640952470
 GameObject:
   m_ObjectHideFlags: 0
@@ -996,7 +997,6 @@ MonoBehaviour:
   timer: 5
   cursorTypes: 000000000100000002000000
   trainingBlock:
-    numDistractors: 25
     clicksPerTrial: 10
     A:
     - 90
@@ -1005,12 +1005,11 @@ MonoBehaviour:
     W:
     - 0.4
   experimentBlock:
-    numDistractors: 25
     clicksPerTrial: 5
     A:
+    - 50
+    - 60
     - 70
-    - 80
-    - 90
     D:
     - 0
     - 0.5

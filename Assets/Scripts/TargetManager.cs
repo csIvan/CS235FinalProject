@@ -11,9 +11,10 @@ public class TargetManager : MonoBehaviour
     [SerializeField] private GameObject goalPrefab;
     [SerializeField] private GameObject distractorPrefab;
     // Target generation settings
-    [SerializeField] private Vector2 experimentArea = new Vector2(1000.0f, 1500.0f);
+    [SerializeField] private Vector2 experimentBounds = new Vector2(500.0f, 500.0f);
     [SerializeField] private float targetRadius = 5.0f;
     [SerializeField] private float targetMargin = 5.0f;
+    [SerializeField]  private float distractorConeAngle = 20.0f;
 
     // Target Game Objects
     public GameObject GoalObject { get; private set; }
@@ -23,8 +24,8 @@ public class TargetManager : MonoBehaviour
     private Vector2 lastGoalPos;
     private Vector2 sliceDir;
     private Vector2 sliceOrigin;
-    private float sliceAng = 20.0f;
-
+    // The maximum number of targets that will fit in the bounds
+    private int maxTargets = 0;
 
     void Awake()
     {
@@ -33,6 +34,7 @@ public class TargetManager : MonoBehaviour
             Instance = this;
 
         Targets = new List<GameObject>();
+        maxTargets = calcMaxTargets();
     }
 
     // Spawn one target in the center of the screen
@@ -40,7 +42,7 @@ public class TargetManager : MonoBehaviour
     {
         clearTargets();
 
-        Vector2 targetPosition = Camera.main.ScreenToWorldPoint(new Vector2(Screen.width / 2.0f, Screen.height / 2.0f));
+        Vector2 targetPosition = Camera.main.ScreenToWorldPoint(new Vector2(Screen.width * 0.5f, Screen.height * 0.5f));
         GoalObject = InstantiateTarget(goalPrefab, targetPosition, targetRadius);
         lastGoalPos = GoalObject.transform.localPosition;
     }
@@ -60,6 +62,20 @@ public class TargetManager : MonoBehaviour
 
         GoalObject = null;
         Targets = new List<GameObject>();
+    }
+
+    // Estimate the maximum number of targets that can fit in the bounds
+    private int calcMaxTargets()
+    {
+        // Calculate the area of the experiment region
+        float boundsArea = experimentBounds.x * experimentBounds.y;
+
+        // Estimate the area needed for one target
+        float targetArea = (targetRadius + targetMargin) * 2.0f;
+        targetArea *= targetArea;
+
+        // Calculate the maximum number of allowed targets in the bounds
+        return Mathf.FloorToInt(boundsArea / targetArea);
     }
 
     private void SpawnGoal(TrialVars variables)
@@ -106,16 +122,15 @@ public class TargetManager : MonoBehaviour
     private void SpawnDistractors(TrialVars variables)
     {
         float dist = variables.A - ((targetRadius * 2.0f) + targetMargin / 4.0f) * 2.0f;
-        float spacing = (targetRadius * 2.0f + (targetMargin / 2.0f));
+        float spacing = (targetRadius * 2.0f + (targetMargin * 0.5f));
 
-        int intermediateDistractors = (variables.D != 0) ? (int)(dist / (spacing / variables.D)) : 0;
-
-        // To-do: Replace hard-coded distractor number with a
-        // calculation based on the distractor density
-        int numDistractors = 25;
+        // Distractors in the cone
+        int interDistractors = (variables.D != 0) ? (int)(dist / (spacing / variables.D)) : 0;
+        // Distractors outside the cone
+        int remDistractors = Mathf.FloorToInt(maxTargets * variables.D) - interDistractors;
 
         // Spawn intermediate distractors within cone
-        for (int i = 0; i < intermediateDistractors; i++)
+        for (int i = 0; i < interDistractors; i++)
         {
             GameObject target = InstantiateTarget(distractorPrefab, new Vector2(0.0f, 0.0f), targetRadius);
 
@@ -123,13 +138,16 @@ public class TargetManager : MonoBehaviour
             Vector2 perpVec = ((i + 1) % 2 == 0) ? Vector2.Perpendicular(sliceDir) : Vector2.Perpendicular(-sliceDir);
 
             Vector2 x = sliceOrigin + (sliceDir * newSpacing);
-            Vector2 y = x + (perpVec.normalized * Random.Range(targetRadius / 2.0f, (newSpacing * Mathf.Tan(Mathf.Deg2Rad * (sliceAng / 2.0f)))));
+            Vector2 y = x + (perpVec.normalized * Random.Range(targetRadius * 0.5f, (newSpacing * Mathf.Tan(Mathf.Deg2Rad * (distractorConeAngle * 0.5f)))));
             target.transform.localPosition = y;
         }
 
         // Remaining distractors outside cone
-        numDistractors = (int)(numDistractors * variables.D);
-        for (int i = 0; i < numDistractors; i++)
+        remDistractors = (int)(remDistractors * variables.D);
+
+
+
+        for (int i = 0; i < remDistractors; i++)
         {
             GameObject target = InstantiateTarget(distractorPrefab, new Vector2(0.0f, 0.0f), targetRadius);
 
@@ -142,8 +160,8 @@ public class TargetManager : MonoBehaviour
 
     private Vector2 randomTargetPos()
     {
-        float halfWidth = experimentArea.x / 2.0f;
-        float halfHeight = experimentArea.y / 2.0f;
+        float halfWidth = experimentBounds.x * 0.5f;
+        float halfHeight = experimentBounds.y * 0.5f;
 
         float randomX = Random.Range(-halfWidth, halfWidth);
         float randomY = Random.Range(-halfHeight, halfHeight);
@@ -184,8 +202,8 @@ public class TargetManager : MonoBehaviour
         Vector2 pos = target.transform.localPosition;
         float radius = target.GetComponent<Target>().Radius;
 
-        float halfWidth = experimentArea.x / 2.0f;
-        float halfHeight = experimentArea.y / 2.0f;
+        float halfWidth = experimentBounds.x * 0.5f;
+        float halfHeight = experimentBounds.y * 0.5f;
 
         if (pos.x < (-halfWidth + radius + targetMargin) || pos.x > (halfWidth - radius - targetMargin) ||
             pos.y < (-halfHeight + radius + targetMargin) || pos.y > (halfHeight - radius - targetMargin))
