@@ -58,6 +58,7 @@ public class ExperimentManager : MonoBehaviour
 
     void Start()
     {
+
         // Get iterators to the trial blocks
         ITrainingTrials = trainingBlock.GetEnumerator();
         IExperimentTrials = experimentBlock.GetEnumerator();
@@ -65,7 +66,7 @@ public class ExperimentManager : MonoBehaviour
         startTrial();
 
         // Set the first cursor type
-        CursorType cursorType = (CursorType.Ellipse);
+        CursorType cursorType = (CursorType)randomCursors[currentCursor];
         CursorManager.Instance.cursorType = cursorType;
 
         // Store the current time
