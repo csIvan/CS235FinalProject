@@ -18,7 +18,7 @@ public class EllipseCursor : Cursor
     void Start()
     {
         updatePosition();
-        currPos = transform.position;
+        currPos = transform.localPosition;
     }
 
     // Implementation of Bubble Cursor
@@ -34,7 +34,7 @@ public class EllipseCursor : Cursor
     {
         // Update the positions
         prevPos = currPos;
-        currPos = transform.position;
+        currPos = transform.localPosition;
         // Calculate the speed of the cursor
         Vector2 velocity = (currPos - prevPos);
         float speed = velocity.magnitude;
@@ -88,7 +88,7 @@ public class EllipseCursor : Cursor
             dimensions.x = dimensions.y * radiusRatio;
 
             // Compute the new distance to the closest target
-            float newDist = sdf(closestTarget.Item1.transform.position);
+            float newDist = sdf(closestTarget.Item1.transform.localPosition);
 
             // If the target is not encapsulated, don't select it
             if (newDist > closestTarget.Item1.GetComponent<Target>().Radius)
@@ -98,7 +98,7 @@ public class EllipseCursor : Cursor
         // Set the scale of the ellipse
         transform.localScale = dimensions;
         // Select the closest target
-        setSelected(closestTarget.Item1, transform.position);
+        setSelected(closestTarget.Item1, transform.localPosition);
     }
 
     // Recalculate the unscaled World-To-Local space transform matrix

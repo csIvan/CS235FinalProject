@@ -39,7 +39,7 @@ public class Target : MonoBehaviour
     {
         if (animating)
         {
-            if (bubbleObject.transform.position == transform.position)
+            if (bubbleObject.transform.localPosition == transform.localPosition)
                 stopAnimation();
             
             animateBubble();
@@ -49,7 +49,7 @@ public class Target : MonoBehaviour
     public void startAnimation(Vector2 startPos)
     {
         // Move the bubble to the contact point
-        Vector2 targetPos = transform.position;
+        Vector2 targetPos = transform.localPosition;
         Vector2 direction = (targetPos - startPos).normalized;
         float bubbleRadius = bubbleScale * 0.5f;
         bubbleObject.transform.localPosition = -direction * bubbleRadius;
@@ -61,7 +61,7 @@ public class Target : MonoBehaviour
     public void stopAnimation()
     {
         // Reset the selection bubble to its default position and location
-        bubbleObject.transform.position = transform.position;
+        bubbleObject.transform.localPosition = transform.localPosition;
 
         float diamter = bubbleScale * 2.0f;
         bubbleObject.transform.localScale = new Vector2(diamter, diamter);

@@ -376,7 +376,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   goalPrefab: {fileID: 7610662509062196790, guid: 2171f57176501fd42bc2296ef6fd2cea, type: 3}
   distractorPrefab: {fileID: 6675055917911164191, guid: 86603f6bcee091c4aa8a75d3393f6049, type: 3}
-  experimentArea: {x: 500, y: 400}
+  experimentArea: {x: 300, y: 200}
   targetRadius: 5
   targetMargin: 5
 --- !u!1 &640952470
@@ -616,7 +616,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxRadius: 100
   maxRadiusRatio: 5
-  maxSpeed: 2
+  maxSpeed: 20
   margin: 1
   maxError: 0.1
 --- !u!212 &751806314

@@ -57,6 +57,6 @@ public class BubbleCursor : Cursor
         transform.localScale = new Vector2(bubbleRadius * 2, bubbleRadius * 2);
 
         // Set the new selected target
-        setSelected(closestTarget, transform.position);
+        setSelected(closestTarget, transform.localPosition);
     }
 }

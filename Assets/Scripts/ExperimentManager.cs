@@ -40,6 +40,8 @@ public class ExperimentManager : MonoBehaviour
         ICurrentTrial = IExperimentTrials;
         startTrial();
 
+        CursorManager.Instance.setCursor(CursorType.Ellipse);
+
         /// JSON Test
         Click testClick = new Click();
         testClick.startPos = new Vector2(0.0f, 0.0f);
