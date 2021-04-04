@@ -38,27 +38,30 @@ public class CursorManager : MonoBehaviour
         currentCursor.SetActive(false);
 
         switch (cursorType) {
-            case CursorType.Point: {
-                    currentCursor = pointCursor;
-                    UnityEngine.Cursor.SetCursor(null, Vector2.zero, CursorMode.ForceSoftware);
-                }
+            case CursorType.Point:
+                currentCursor = pointCursor;
+                setCursorTexture(null);
                 break;
 
-            case CursorType.Bubble: {
-                    currentCursor = bubbleCursor;
-                    UnityEngine.Cursor.SetCursor(cursorTexture, currentCursor.transform.position + new Vector3(cursorTexture.width / 2.0f, cursorTexture.width / 2.0f), CursorMode.ForceSoftware);
-                }
+            case CursorType.Bubble:
+                currentCursor = bubbleCursor;
+                setCursorTexture(cursorTexture);
                 break;
 
-            case CursorType.Ellipse: {
-                    currentCursor = ellipseCursor;
-                    UnityEngine.Cursor.SetCursor(cursorTexture, currentCursor.transform.position + new Vector3(cursorTexture.width / 2.0f, cursorTexture.width / 2.0f), CursorMode.ForceSoftware);
-                }
+            case CursorType.Ellipse:
+                currentCursor = ellipseCursor;
+                setCursorTexture(cursorTexture);
                 break;
         }
 
         currentCursor.SetActive(true);
         currentCursorType = cursorType;
+    }
+
+    private void setCursorTexture(Texture2D texture)
+    {
+        Vector3 cursorOffset = new Vector3(cursorTexture.width, cursorTexture.width) * 0.5f;
+        UnityEngine.Cursor.SetCursor(texture, currentCursor.transform.position + cursorOffset, CursorMode.ForceSoftware);
     }
 
     public Vector2 getCursorPos()
