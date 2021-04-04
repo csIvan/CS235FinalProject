@@ -1,6 +1,5 @@
 using System;
 using System.Collections;
-using System.Linq;
 using UnityEngine;
 
 public class TrialVars
@@ -30,8 +29,6 @@ public class BlockVariables : IEnumerator, IEnumerable
     [SerializeField] private float[] D;
     [SerializeField] private float[] W;
 
-    private static System.Random rng = new System.Random();
-
     private bool initialized = false;
     private int numTrials;
     // The default trial is one before the first element
@@ -46,7 +43,7 @@ public class BlockVariables : IEnumerator, IEnumerable
     {
         numTrials = A.Length * D.Length * W.Length;
         genCombinations();
-        genRandomIndices();
+        randomIndices = Utility.randomIntArray(numTrials);
     }
 
     private void genCombinations()
@@ -63,22 +60,6 @@ public class BlockVariables : IEnumerator, IEnumerable
                     combinations[combIndex++] = new TrialVars(A[AIndex], D[DIndex], W[WIndex]);
     }
 
-    private void genRandomIndices()
-    {
-        // Generate an array containing each index of the combinations array
-        randomIndices = Enumerable.Range(0, numTrials).ToArray();
-
-        // Randomize the array using Fisher-Yates shuffle
-        for (int index1 = randomIndices.Length - 1; index1 > 0; index1--)
-        {
-            index1--;
-            int index2 = rng.Next(index1 + 1);
-            int tempValue = randomIndices[index2];
-            randomIndices[index2] = randomIndices[index1];
-            randomIndices[index1] = tempValue;
-        }
-    }
-
     // IEnumerator and IEnumerable
     public IEnumerator GetEnumerator()
     {
@@ -89,7 +70,7 @@ public class BlockVariables : IEnumerator, IEnumerable
     public void Reset()
     {
         currTrial = -1;
-        genRandomIndices();
+        randomIndices = Utility.randomIntArray(numTrials);
     }
 
     // IEnumerator

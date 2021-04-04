@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -21,45 +22,39 @@ public class ExperimentManager : MonoBehaviour
     private IEnumerator ITrainingTrials;
     private IEnumerator IExperimentTrials;
     private IEnumerator ICurrentTrial;
+    private bool isTrainingBlock = true;
     private int currentClick = 0;
+
+    // A randomized list of cursor types
+    private int[] randomCursors;
+    // The current cursor
+    private int currentCursor = 0;
 
     // Timer variables
     private float movementTime = 0;
-    // Determines if the current block is the training block
-    private bool isTrainingBlock = true;
 
     void Awake()
     {
         // Set this script as the only instance of the ExperimentManager class
         if (Instance == null)
             Instance = this;
+
+        // Generate a random array of cursors
+        int numCursors = Enum.GetNames(typeof(CursorType)).Length;
+        randomCursors = Utility.randomIntArray(numCursors);
     }
 
     void Start()
     {
+        // Get iterators to the trial blocks
         ITrainingTrials = trainingBlock.GetEnumerator();
         IExperimentTrials = experimentBlock.GetEnumerator();
         ICurrentTrial = ITrainingTrials;
         startTrial();
 
-        CursorManager.Instance.setCursor(CursorType.Bubble);
-
-        /// JSON Test
-        Click testClick = new Click();
-        testClick.startPos = new Vector2(0.0f, 0.0f);
-        testClick.endPos = new Vector2(10.0f, 10.0f);
-        testClick.movementTime = 1.0f;
-
-        Trial testTrial = new Trial();
-        testTrial.amplitude = 5.0f;
-        testTrial.distractorDesnity = 0.5f;
-        testTrial.effectiveWidth = 20.0f;
-        testTrial.clicks = new List<Click>();
-        testTrial.clicks.Add(testClick);
-
-        string json = JsonUtility.ToJson(testTrial);
-
-        DatabaseManager.Instance.submitJSON(json);
+        // Set the first cursor type
+        CursorType cursorType = (CursorType)randomCursors[currentCursor];
+        CursorManager.Instance.setCursor(cursorType);
     }
 
     void Update()
@@ -133,10 +128,18 @@ public class ExperimentManager : MonoBehaviour
                     ICurrentTrial = IExperimentTrials;
                     isTrainingBlock = false;
                 }
-                // If this is the experiment block, end the experiment
+                // If the experiment block is complete, move to the next cursor
                 else
                 {
-                    return false;
+                    // If this isn't the last cursor, go to the next cursor
+                    if (currentCursor < randomCursors.Length)
+                    {
+                        currentCursor++;
+                        CursorManager.Instance.setCursor((CursorType)currentCursor);
+                    }
+                    // If this the last cursor, the experiment is complete
+                    else
+                        return false;
                 }
             }
 
