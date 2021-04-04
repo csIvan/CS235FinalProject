@@ -1,6 +1,5 @@
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
@@ -20,7 +19,7 @@ public class TrialVars
 
 
 [Serializable]
-public class Block : IEnumerator, IEnumerable
+public class BlockVariables : IEnumerator, IEnumerable
 {
     // Experiment variables
     [SerializeField] private int numDistractors = 25;

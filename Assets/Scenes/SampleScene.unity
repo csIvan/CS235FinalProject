@@ -491,8 +491,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 534cf4726fe8bb746a3b25f95cc0c46c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  successMessage: 
-  failureMessage: 
+  successMessage: Successfully uploaded data
+  failureMessage: Oops, we couldn't upload your data
 --- !u!114 &697651489
 MonoBehaviour:
   m_ObjectHideFlags: 0

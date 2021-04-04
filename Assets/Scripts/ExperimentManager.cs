@@ -5,13 +5,6 @@ using UnityEngine.UI;
 
 public class ExperimentManager : MonoBehaviour
 {
-    private enum Cursor
-    {
-        Point,
-        Bubble,
-        Ellipse
-    }
-
     // A self-reference to the singleton instance of this script
     public static ExperimentManager Instance { get; private set; }
 
@@ -31,9 +24,9 @@ public class ExperimentManager : MonoBehaviour
     [SerializeField] private float targetRadius = 5.0f;
     [SerializeField] private float targetMargin = 5.0f;
     [SerializeField] private float timer = 5.0f;
-    [SerializeField] private Cursor[] cursorTypes;
-    [SerializeField] private Block trainingBlock;
-    [SerializeField] private Block experimentBlock;
+    [SerializeField] private CursorType[] cursorTypes;
+    [SerializeField] private BlockVariables trainingBlock;
+    [SerializeField] private BlockVariables experimentBlock;
 
     // Target GameObjects
     public GameObject GoalObject { get; private set; }
@@ -72,7 +65,22 @@ public class ExperimentManager : MonoBehaviour
         ICurrentTrial = IExperimentTrials;
         startTrial();
 
-        DatabaseManager.Instance.submitJSON("{\"test\": \"test\"}");
+        /// JSON Test
+        Click testClick = new Click();
+        testClick.startPos = new Vector2(0.0f, 0.0f);
+        testClick.endPos = new Vector2(10.0f, 10.0f);
+        testClick.movementTime = 1.0f;
+
+        Trial testTrial = new Trial();
+        testTrial.amplitude = 5.0f;
+        testTrial.distractorDesnity = 0.5f;
+        testTrial.effectiveWidth = 20.0f;
+        testTrial.clicks = new List<Click>();
+        testTrial.clicks.Add(testClick);
+
+        string json = JsonUtility.ToJson(testTrial);
+
+        DatabaseManager.Instance.submitJSON(json);
     }
 
     void Update()
