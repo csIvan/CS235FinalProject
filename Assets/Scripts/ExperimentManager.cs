@@ -27,6 +27,7 @@ public class ExperimentManager : MonoBehaviour
     private IEnumerator ICurrentTrial;
     private bool firstTrial = true;
     private bool isTrainingBlock = true;
+    private bool experimentFinished = false;
     private int currentClick = 0;
 
     // Cursor management variables
@@ -58,7 +59,6 @@ public class ExperimentManager : MonoBehaviour
 
     void Start()
     {
-
         // Get iterators to the trial blocks
         ITrainingTrials = trainingBlock.GetEnumerator();
         IExperimentTrials = experimentBlock.GetEnumerator();
@@ -79,7 +79,7 @@ public class ExperimentManager : MonoBehaviour
         movementTime += Time.deltaTime;
 
         // If the timer exceeds the limit, move onto the next trial
-        if (currentClick > 0 && movementTime >= timer)
+        if (currentClick > 0 && movementTime >= timer && !experimentFinished)
             Instance.targetTimeOut();
     }
 
@@ -205,6 +205,7 @@ public class ExperimentManager : MonoBehaviour
         // Submit the experiment data to the database
         string experimentJSON = JsonUtility.ToJson(experimentData);
         DatabaseManager.Instance.submitJSON(experimentJSON);
+        experimentFinished = true;
     }
 
     private void storeClick(bool timeout = false)
