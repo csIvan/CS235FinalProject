@@ -78,8 +78,8 @@ public class ExperimentManager : MonoBehaviour
         movementTime += Time.deltaTime;
 
         // If the timer exceeds the limit, move onto the next trial
-        if (movementTime >= timer)
-            Instance.timeOut();
+        if (currentClick > 0 && movementTime >= timer)
+            Instance.targetTimeOut();
     }
 
     public void targetHit()
@@ -102,7 +102,6 @@ public class ExperimentManager : MonoBehaviour
             endExperiment();
         }
 
-
         // Reset the timer
         movementTime = 0.0f;
     }
@@ -113,9 +112,12 @@ public class ExperimentManager : MonoBehaviour
         clickData.misClickPos.Add(CursorManager.Instance.getCursorPos());
     }
 
-    private void timeOut()
+    private void targetTimeOut()
     {
-        Debug.Log("Time Out");
+        // Store the click data with a flag signifying that the timer ran out
+        storeClick(false);
+        nextTask();
+        movementTime = 0.0f;
     }
 
     private void startTrial()
@@ -204,12 +206,12 @@ public class ExperimentManager : MonoBehaviour
         DatabaseManager.Instance.submitJSON(experimentJSON);
     }
 
-    private void storeClick()
+    private void storeClick(bool timeout = false)
     {
         clickData.startPos = cursorStartPos;
-        clickData.endPos = CursorManager.Instance.getCursorPos();
         clickData.goalPos = TargetManager.Instance.GoalObject.transform.localPosition;
         clickData.movementTime = movementTime;
+        clickData.timeout = timeout;
 
         // If there were no misclicks, set the list to null
         if (clickData.misClickPos.Count == 0)
