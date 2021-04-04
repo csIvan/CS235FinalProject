@@ -103,11 +103,11 @@ public class EllipseCursor : Cursor
             }
 
             // Restrict the size if it is too large
-            if (dimensions.y > maxRadius)
+            if (dimensions.x > maxRadius)
             {
                 // Set the dimensions to the maximum
-                dimensions.y = maxRadius;
-                dimensions.x = dimensions.y * radiusRatio;
+                dimensions.x = maxRadius;
+                dimensions.y = dimensions.x / radiusRatio;
 
                 // Compute the new distance to the closest target
                 float newDist = sdf(closestTarget.Item1.transform.localPosition);
