@@ -92,25 +92,30 @@ public class TargetManager : MonoBehaviour
     {
         GoalObject = InstantiateTarget(goalPrefab, new Vector2(0.0f, 0.0f), targetRadius);
 
+        Vector2 randomPos;
+        Vector2 distVec;
+
         // Set the location of the goal target
         do
         {
             // Generate a random point in the experiment area
-            Vector2 randomPos = randomTargetPos();
+            randomPos = randomTargetPos();
             // Get the vector from the last goal position to the random point
-            Vector2 offset = lastGoalPos - randomPos;
-
-            // Set the slice origin and direction
-            sliceOrigin = lastGoalPos;
-            sliceDir = offset.normalized;
+            distVec = lastGoalPos - randomPos;
 
             // Adjust the vector to have the correct amplitude
-            offset = offset.normalized * variables.A;
+            distVec = distVec.normalized * variables.A;
 
             // Set the new goal position
-            GoalObject.transform.localPosition = lastGoalPos + offset;
+            GoalObject.transform.localPosition = lastGoalPos + distVec;
 
         } while (!checkInBounds(GoalObject));
+
+        // Set the slice origin and direction
+        sliceOrigin = lastGoalPos;
+        sliceDir = distVec.normalized;
+
+        float randomAngle = Random.Range(0.0f, 90.0f);
 
         // Four Distractors to control Goal Target's Effective Width
         for (int i = 0; i < 4; i++)
@@ -121,7 +126,7 @@ public class TargetManager : MonoBehaviour
             float sign = (GoalObject.transform.localPosition.y < lastGoalPos.y) ? -1.0f : 1.0f;
             float offset = (targetRadius * 2f) + targetMargin;
 
-            float angle = Mathf.Deg2Rad * (Vector2.Angle(Vector2.right, dir) * sign + (90 * i));
+            float angle = Mathf.Deg2Rad * (randomAngle + (90.0f * i));
             Vector2 pos2d = new Vector2(Mathf.Sin(angle) * offset, Mathf.Cos(angle) * offset) + (Vector2)GoalObject.transform.localPosition;
             target.transform.localPosition = pos2d;
         }
