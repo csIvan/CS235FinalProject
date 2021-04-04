@@ -8,8 +8,9 @@ public class ExperimentManager : MonoBehaviour
     // A self-reference to the singleton instance of this script
     public static ExperimentManager Instance { get; private set; }
 
-    // Resource references
-    [SerializeField] private Text trialStartText;
+    // UI References
+    [SerializeField] private GameObject experimentStartText;
+    [SerializeField] private GameObject trialStartText;
 
     // The parameters for the experiment
     [SerializeField] private Vector2 experimentBounds = new Vector2(250.0f, 150.0f);
@@ -24,6 +25,7 @@ public class ExperimentManager : MonoBehaviour
     private IEnumerator ITrainingTrials;
     private IEnumerator IExperimentTrials;
     private IEnumerator ICurrentTrial;
+    private bool firstTrial = true;
     private bool isTrainingBlock = true;
     private int currentClick = 0;
 
@@ -82,6 +84,10 @@ public class ExperimentManager : MonoBehaviour
 
     public void targetHit()
     {
+        // Hide any text on-screen
+        experimentStartText.SetActive(false);
+        trialStartText.SetActive(false);
+
         // If this block isn't the training block and
         // this clicking task isn't the start button,
         // save the data from this clicking task
@@ -119,8 +125,13 @@ public class ExperimentManager : MonoBehaviour
         ICurrentTrial.Reset();
         ICurrentTrial.MoveNext();
 
-        trialStartText.gameObject.SetActive(true);
-        trialStartText.text = "Trial " + 1 + " \nClick the target to start";
+
+        // Don't show the trial start text on the first trial
+        if (firstTrial)
+            firstTrial = false;
+        // On subsequent trials, show the trial start text
+        else
+            trialStartText.SetActive(true);
     }
 
     // Attempts to proceed to the next task in the experiment
