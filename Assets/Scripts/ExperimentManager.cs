@@ -71,6 +71,8 @@ public class ExperimentManager : MonoBehaviour
         IExperimentTrials = experimentBlock.GetEnumerator();
         ICurrentTrial = IExperimentTrials;
         startTrial();
+
+        DatabaseManager.TestJS();
     }
 
     void Update()
