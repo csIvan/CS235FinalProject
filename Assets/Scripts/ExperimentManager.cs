@@ -11,13 +11,8 @@ public class ExperimentManager : MonoBehaviour
     // Resource references
     [SerializeField] private GameObject goalPrefab;
     [SerializeField] private GameObject distractorPrefab;
-    [SerializeField] private GameObject targetsRoot;
-    [SerializeField] private Texture2D cursorTexture;
+    [SerializeField] private GameObject targetsParent;
     [SerializeField] private Text trialStartText;
-
-    [SerializeField] private GameObject pointCursor;
-    [SerializeField] private GameObject bubbleCursor;
-    [SerializeField] private GameObject ellipseCursor;
 
     // The parameters for the experiment
     [SerializeField] private Vector2 experimentArea = new Vector2(1000.0f, 1500.0f);
@@ -56,9 +51,6 @@ public class ExperimentManager : MonoBehaviour
 
     void Start()
     {
-        //pointCursor.SetActive(true);
-        //bubbleCursor.SetActive(true);
-        ellipseCursor.SetActive(true);
         Targets = new List<GameObject>();
         ITrainingTrials = trainingBlock.GetEnumerator();
         IExperimentTrials = experimentBlock.GetEnumerator();
@@ -199,7 +191,7 @@ public class ExperimentManager : MonoBehaviour
     private GameObject InstantiateTarget(GameObject targetPrefab, Vector2 position, float radius)
     {
         GameObject target = Instantiate(targetPrefab, position, Quaternion.identity);
-        target.transform.SetParent(targetsRoot.transform);
+        target.transform.SetParent(targetsParent.transform);
         target.GetComponent<Target>().Radius = radius;
         Targets.Add(target);
 

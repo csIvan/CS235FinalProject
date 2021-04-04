@@ -132,6 +132,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4564532}
+  - component: {fileID: 4564533}
   m_Layer: 0
   m_Name: Cursors
   m_TagString: Untagged
@@ -156,6 +157,22 @@ Transform:
   m_Father: {fileID: 980196934}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4564533
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4564531}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a6654a6d2a479d84b942fc08a1292d2b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  pointCursor: {fileID: 1046087751}
+  bubbleCursor: {fileID: 640952470}
+  ellipseCursor: {fileID: 751806309}
+  cursorTexture: {fileID: 2800000, guid: 2292662db3e1dc74188a568e21c5c910, type: 3}
 --- !u!1 &195413203
 GameObject:
   m_ObjectHideFlags: 0
@@ -959,12 +976,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   goalPrefab: {fileID: 7610662509062196790, guid: 2171f57176501fd42bc2296ef6fd2cea, type: 3}
   distractorPrefab: {fileID: 6675055917911164191, guid: 86603f6bcee091c4aa8a75d3393f6049, type: 3}
-  targetsRoot: {fileID: 581898362}
-  cursorTexture: {fileID: 2800000, guid: 2292662db3e1dc74188a568e21c5c910, type: 3}
+  cursorsParent: {fileID: 4564531}
+  targetsParent: {fileID: 581898362}
   trialStartText: {fileID: 804535436}
-  pointCursor: {fileID: 1046087751}
-  bubbleCursor: {fileID: 640952470}
-  ellipseCursor: {fileID: 751806309}
   experimentArea: {x: 300, y: 200}
   targetRadius: 5
   targetMargin: 5
