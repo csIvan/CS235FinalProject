@@ -43,6 +43,7 @@ public class EllipseCursor : Cursor
         if (speed == 0.0f)
         {
             radiusRatio = 1.0f;
+            dimensions.x = dimensions.y;
             return;
         }
 
