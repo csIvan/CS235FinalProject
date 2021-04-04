@@ -72,7 +72,7 @@ public class ExperimentManager : MonoBehaviour
         ICurrentTrial = IExperimentTrials;
         startTrial();
 
-        DatabaseManager.TestJS();
+        DatabaseManager.Instance.submitJSON("{\"test\": \"test\"}");
     }
 
     void Update()
