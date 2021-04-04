@@ -25,6 +25,8 @@ public class ExperimentManager : MonoBehaviour
 
     // Timer variables
     private float movementTime = 0;
+    // Determines if the current block is the training block
+    private bool isTrainingBlock = true;
 
     void Awake()
     {
@@ -37,10 +39,10 @@ public class ExperimentManager : MonoBehaviour
     {
         ITrainingTrials = trainingBlock.GetEnumerator();
         IExperimentTrials = experimentBlock.GetEnumerator();
-        ICurrentTrial = IExperimentTrials;
+        ICurrentTrial = ITrainingTrials;
         startTrial();
 
-        CursorManager.Instance.setCursor(CursorType.Ellipse);
+        CursorManager.Instance.setCursor(CursorType.Bubble);
 
         /// JSON Test
         Click testClick = new Click();
@@ -65,9 +67,34 @@ public class ExperimentManager : MonoBehaviour
         // Update the timer
         movementTime += Time.deltaTime;
 
-        // If the timer exceeds the limit, move on to the next trial
+        // If the timer exceeds the limit, move onto the next trial
         if (movementTime >= timer)
-            Instance.targetMiss();
+            Instance.timeOut();
+    }
+
+    public void targetHit()
+    {
+        // Movement Time Test
+        if (currentClick > 0)
+            Debug.Log(movementTime);
+
+        // Reset the timer
+        movementTime = 0.0f;
+
+        // Move onto the next task of the experiment
+        // If there are no more trials left, end the experiment
+        if (!nextTask())
+            endExperiment();
+    }
+
+    public void targetMiss()
+    {
+        Debug.Log("Miss");
+    }
+
+    private void timeOut()
+    {
+        Debug.Log("Time Out");
     }
 
     private void startTrial()
@@ -81,31 +108,48 @@ public class ExperimentManager : MonoBehaviour
         trialStartText.text = "Trial " + 1 + " \nClick the target to start";
     }
 
-    public void targetHit()
+    // Attempts to proceed to the next task in the experiment
+    private bool nextTask()
     {
-        if (currentClick >= experimentBlock.ClicksPerTrial)
+        // If the trial is not complete, move to the next task in the trial
+        if (currentClick < experimentBlock.ClicksPerTrial)
         {
-            if (ICurrentTrial.MoveNext())
-                startTrial();
-            else
-                ICurrentTrial.Reset();
+            // Spawn a new set of targets
+            TargetManager.Instance.spawnTrialTargets((TrialVars)ICurrentTrial.Current, 25);
+            currentClick++;
+        }
+        // If the trial is complete, move to the next trial
+        else
+        {
+            // Attempt to move to the next trial
+            bool isNext = ICurrentTrial.MoveNext();
 
+            // If this block is complete, move to the next block
+            if (!isNext)
+            {
+                // If this is the training block, move onto the experiment block
+                if (isTrainingBlock)
+                {
+                    ICurrentTrial = IExperimentTrials;
+                    isTrainingBlock = false;
+                }
+                // If this is the experiment block, end the experiment
+                else
+                {
+                    return false;
+                }
+            }
+
+            // Start the next trial
+            startTrial();
             currentClick = 0;
         }
 
-        // Movement Time
-        if (currentClick > 0)
-            Debug.Log(movementTime);
-
-        // Reset the timer
-        movementTime = 0.0f;
-
-        TargetManager.Instance.spawnTrialTargets((TrialVars)ICurrentTrial.Current, 25);
-        currentClick++;
+        return true;
     }
 
-    public void targetMiss()
+    private void endExperiment()
     {
-        Debug.Log("Miss");
+
     }
 }

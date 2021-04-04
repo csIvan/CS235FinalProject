@@ -102,7 +102,7 @@ public class BlockVariables : IEnumerator, IEnumerable
         }
 
         // Return false if there is no next trial
-        if (currTrial >= numTrials)
+        if (currTrial >= numTrials - 1)
             return false;
 
         // Move to the next trial

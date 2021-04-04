@@ -999,9 +999,9 @@ MonoBehaviour:
     numDistractors: 25
     clicksPerTrial: 9
     A:
-    - 40
+    - 70
     D:
-    - 4
+    - 0.5
     W:
     - 0.4
   experimentBlock:
