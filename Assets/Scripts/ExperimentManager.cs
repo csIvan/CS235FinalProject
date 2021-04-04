@@ -12,10 +12,13 @@ public class ExperimentManager : MonoBehaviour
     [SerializeField] private Text trialStartText;
 
     // The parameters for the experiment
+    [SerializeField] private Vector2 experimentBounds = new Vector2(250.0f, 150.0f);
     [SerializeField] private float timer = 5.0f;
     [SerializeField] private CursorType[] cursorTypes;
     [SerializeField] private BlockVariables trainingBlock;
     [SerializeField] private BlockVariables experimentBlock;
+
+    public Vector2 ExperimentBounds { get { return experimentBounds; } }
 
     // Trial Management variables
     private IEnumerator ITrainingTrials;

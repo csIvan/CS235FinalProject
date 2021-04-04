@@ -11,7 +11,6 @@ public class TargetManager : MonoBehaviour
     [SerializeField] private GameObject goalPrefab;
     [SerializeField] private GameObject distractorPrefab;
     // Target generation settings
-    [SerializeField] private Vector2 experimentBounds = new Vector2(500.0f, 500.0f);
     [SerializeField] private float targetRadius = 5.0f;
     [SerializeField] private float targetMargin = 5.0f;
     [SerializeField]  private float distractorConeAngle = 20.0f;
@@ -21,6 +20,8 @@ public class TargetManager : MonoBehaviour
     public List<GameObject> Targets { get; private set; }
 
     // Distractor generation variables
+    private Vector2 experimentBounds;
+    private Vector2 halfBounds;
     private Vector2 lastGoalPos;
     private Vector2 sliceDir;
     private Vector2 sliceOrigin;
@@ -34,6 +35,15 @@ public class TargetManager : MonoBehaviour
             Instance = this;
 
         Targets = new List<GameObject>();
+    }
+
+    void Start()
+    {
+        // Get the experiment bounds from the experiment manager
+        experimentBounds = ExperimentManager.Instance.ExperimentBounds;
+        halfBounds = experimentBounds * 0.5f;
+
+        // Calculate the maximum number of allowed targets
         maxTargets = calcMaxTargets();
     }
 
@@ -142,10 +152,6 @@ public class TargetManager : MonoBehaviour
             target.transform.localPosition = y;
         }
 
-        // Remaining distractors outside cone
-        remDistractors = (int)(remDistractors * variables.D);
-
-
 
         for (int i = 0; i < remDistractors; i++)
         {
@@ -160,11 +166,8 @@ public class TargetManager : MonoBehaviour
 
     private Vector2 randomTargetPos()
     {
-        float halfWidth = experimentBounds.x * 0.5f;
-        float halfHeight = experimentBounds.y * 0.5f;
-
-        float randomX = Random.Range(-halfWidth, halfWidth);
-        float randomY = Random.Range(-halfHeight, halfHeight);
+        float randomX = Random.Range(-halfBounds.x, halfBounds.x);
+        float randomY = Random.Range(-halfBounds.y, halfBounds.y);
 
         return new Vector2(randomX, randomY);
     }
@@ -190,7 +193,10 @@ public class TargetManager : MonoBehaviour
             float radius1 = target1.GetComponent<Target>().Radius;
             float radius2 = target2.GetComponent<Target>().Radius;
 
-            if (distVec.magnitude < (radius1 + radius2) + targetMargin)
+            float minDistSqr = radius1 + radius2 + targetMargin;
+            minDistSqr *= minDistSqr;
+
+            if (distVec.sqrMagnitude < minDistSqr)
                 return true;
         }
 
@@ -202,11 +208,8 @@ public class TargetManager : MonoBehaviour
         Vector2 pos = target.transform.localPosition;
         float radius = target.GetComponent<Target>().Radius;
 
-        float halfWidth = experimentBounds.x * 0.5f;
-        float halfHeight = experimentBounds.y * 0.5f;
-
-        if (pos.x < (-halfWidth + radius + targetMargin) || pos.x > (halfWidth - radius - targetMargin) ||
-            pos.y < (-halfHeight + radius + targetMargin) || pos.y > (halfHeight - radius - targetMargin))
+        if (pos.x < (-halfBounds.x + radius + targetMargin) || pos.x > (halfBounds.x - radius - targetMargin) ||
+            pos.y < (-halfBounds.y + radius + targetMargin) || pos.y > (halfBounds.y - radius - targetMargin))
             return false;
 
         return true;
