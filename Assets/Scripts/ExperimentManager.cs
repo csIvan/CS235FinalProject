@@ -121,10 +121,8 @@ public class ExperimentManager : MonoBehaviour
     private void startTrial()
     {
         TargetManager.Instance.spawnStartTarget();
-
-        ICurrentTrial.Reset();
+        
         ICurrentTrial.MoveNext();
-
 
         // Don't show the trial start text on the first trial
         if (firstTrial)
@@ -184,6 +182,9 @@ public class ExperimentManager : MonoBehaviour
                     else
                         return false;
                 }
+
+                // Reset the block before using it
+                ICurrentTrial.Reset();
             }
 
             // Start the next trial
