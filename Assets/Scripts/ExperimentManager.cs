@@ -127,7 +127,7 @@ public class ExperimentManager : MonoBehaviour
         if (currentClick < experimentBlock.ClicksPerTrial)
         {
             // Spawn a new set of targets
-            TargetManager.Instance.spawnTrialTargets((TrialVars)ICurrentTrial.Current, 25);
+            TargetManager.Instance.spawnTrialTargets((TrialVars)ICurrentTrial.Current);
             currentClick++;
         }
         // If the trial is complete, move to the next trial

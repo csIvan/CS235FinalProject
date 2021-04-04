@@ -20,11 +20,7 @@ public class TrialVars
 [Serializable]
 public class BlockVariables : IEnumerator, IEnumerable
 {
-    // Experiment variables
-    [SerializeField] private int numDistractors = 25;
     [SerializeField] private int clicksPerTrial = 9;
-
-    // Independent variables (Amplitude, Density, Width)
     [SerializeField] private float[] A;
     [SerializeField] private float[] D;
     [SerializeField] private float[] W;
@@ -36,7 +32,6 @@ public class BlockVariables : IEnumerator, IEnumerable
     private TrialVars[] combinations;
     private int[] randomIndices;
 
-    public int NumDistractors { get { return numDistractors; } }
     public int ClicksPerTrial { get { return clicksPerTrial; } }
 
     private void initialize()

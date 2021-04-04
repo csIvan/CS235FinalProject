@@ -46,11 +46,11 @@ public class TargetManager : MonoBehaviour
     }
 
     // Spawn the targets for a trial given a set of variables
-    public void spawnTrialTargets(TrialVars variables, int numDistractors)
+    public void spawnTrialTargets(TrialVars variables)
     {
         clearTargets();
         SpawnGoal(variables);
-        SpawnDistractors(variables, numDistractors);
+        SpawnDistractors(variables);
     }
 
     public void clearTargets()
@@ -103,12 +103,16 @@ public class TargetManager : MonoBehaviour
         lastGoalPos = GoalObject.transform.localPosition;
     }
 
-    private void SpawnDistractors(TrialVars variables, int numDistractors)
+    private void SpawnDistractors(TrialVars variables)
     {
         float dist = variables.A - ((targetRadius * 2.0f) + targetMargin / 4.0f) * 2.0f;
         float spacing = (targetRadius * 2.0f + (targetMargin / 2.0f));
 
         int intermediateDistractors = (variables.D != 0) ? (int)(dist / (spacing / variables.D)) : 0;
+
+        // To-do: Replace hard-coded distractor number with a
+        // calculation based on the distractor density
+        int numDistractors = 25;
 
         // Spawn intermediate distractors within cone
         for (int i = 0; i < intermediateDistractors; i++)
