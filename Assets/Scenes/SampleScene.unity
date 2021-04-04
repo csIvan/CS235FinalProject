@@ -172,7 +172,7 @@ MonoBehaviour:
   pointCursor: {fileID: 1046087751}
   bubbleCursor: {fileID: 640952470}
   ellipseCursor: {fileID: 751806309}
-  cursorTexture: {fileID: 2800000, guid: 2292662db3e1dc74188a568e21c5c910, type: 3}
+  cursorTexture: {fileID: 2800000, guid: e6823d742d6204642b05f6cfa741b5f6, type: 3}
 --- !u!1 &195413203
 GameObject:
   m_ObjectHideFlags: 0
