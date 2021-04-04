@@ -193,6 +193,7 @@ public class ExperimentManager : MonoBehaviour
     {
         clickData.startPos = cursorStartPos;
         clickData.endPos = CursorManager.Instance.getCursorPos();
+        clickData.goalPos = TargetManager.Instance.GoalObject.transform.localPosition;
         clickData.movementTime = movementTime;
 
         // If there were no misclicks, set the list to null

@@ -15,6 +15,7 @@ public class ClickData
 {
     public Vector2 startPos = Vector2.zero;
     public Vector2 endPos = Vector2.zero;
+    public Vector2 goalPos = Vector2.zero;
     public List<Vector2> misClickPos = new List<Vector2>();
     public float movementTime = 0.0f;
 }
