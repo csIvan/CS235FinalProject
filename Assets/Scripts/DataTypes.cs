@@ -11,7 +11,7 @@ public enum CursorType
 }
 
 [Serializable]
-public class Click
+public class ClickData
 {
     public Vector2 startPos = Vector2.zero;
     public Vector2 endPos = Vector2.zero;
@@ -20,19 +20,19 @@ public class Click
 }
 
 [Serializable]
-public class Trial
+public class TrialData
 {
     public float amplitude = 0.0f;
     public float distractorDesnity = 0.0f;
     public float effectiveWidth = 0.0f;
-    public List<Click> clicks = new List<Click>();
+    public List<ClickData> clicks = new List<ClickData>();
 }
 
 [Serializable]
-public class Block
+public class BlockData
 {
     public CursorType cursorType;
-    public List<Trial> trials = new List<Trial>();
+    public List<TrialData> trials = new List<TrialData>();
 }
 
 [Serializable]
@@ -40,5 +40,5 @@ public class ExperimentData
 {
     public string startTime = "";
     public string endTime = "";
-    public List<Block> blocks = new List<Block>();
+    public List<BlockData> blocks = new List<BlockData>();
 }

@@ -71,28 +71,38 @@ public class EllipseCursor : Cursor
         // Calculate the initial distance
         Tuple<GameObject, float> closestTarget = getClosestDist();
 
-        // Iteratively adjust the size of the ellipse until it reaches the target
-        while (Mathf.Abs(closestTarget.Item2) > maxError)
+        // If there are no targets, set the dimensions to the maximum
+        if (TargetManager.Instance.Targets.Count == 0)
         {
-            dimensions.y += closestTarget.Item2 * 0.5f;
-            dimensions.x = dimensions.y * radiusRatio;
-
-            closestTarget = getClosestDist();
-        }
-
-        // Restrict the size if it is too large
-        if (dimensions.y > maxRadius)
-        {
-            // Set the dimensions to the maximum
             dimensions.y = maxRadius;
             dimensions.x = dimensions.y * radiusRatio;
+        }
+        // Otherwise size the dimensions to encapsulate the closest target
+        else
+        {
+            // Iteratively adjust the size of the ellipse until it reaches the target
+            while (Mathf.Abs(closestTarget.Item2) > maxError)
+            {
+                dimensions.y += closestTarget.Item2 * 0.5f;
+                dimensions.x = dimensions.y * radiusRatio;
 
-            // Compute the new distance to the closest target
-            float newDist = sdf(closestTarget.Item1.transform.localPosition);
+                closestTarget = getClosestDist();
+            }
 
-            // If the target is not encapsulated, don't select it
-            if (newDist > closestTarget.Item1.GetComponent<Target>().Radius)
-                closestTarget = new Tuple<GameObject, float>(null, 0.0f);
+            // Restrict the size if it is too large
+            if (dimensions.y > maxRadius)
+            {
+                // Set the dimensions to the maximum
+                dimensions.y = maxRadius;
+                dimensions.x = dimensions.y * radiusRatio;
+
+                // Compute the new distance to the closest target
+                float newDist = sdf(closestTarget.Item1.transform.localPosition);
+
+                // If the target is not encapsulated, don't select it
+                if (newDist > closestTarget.Item1.GetComponent<Target>().Radius)
+                    closestTarget = new Tuple<GameObject, float>(null, 0.0f);
+            }
         }
 
         // Set the scale of the ellipse

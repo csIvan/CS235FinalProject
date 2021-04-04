@@ -1,6 +1,5 @@
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -25,13 +24,21 @@ public class ExperimentManager : MonoBehaviour
     private bool isTrainingBlock = true;
     private int currentClick = 0;
 
-    // A randomized list of cursor types
+    // Cursor management variables
     private int[] randomCursors;
-    // The current cursor
     private int currentCursor = 0;
 
-    // Timer variables
+    // Data tracking variables
+    private DateTime experimentStartTime;
+    private Vector2 cursorStartPos = Vector2.zero;
     private float movementTime = 0;
+
+    // Data storage variables
+    private ExperimentData experimentData = new ExperimentData();
+    private BlockData blockData = new BlockData();
+    private TrialData trialData = new TrialData();
+    private ClickData clickData = new ClickData();
+
 
     void Awake()
     {
@@ -54,7 +61,10 @@ public class ExperimentManager : MonoBehaviour
 
         // Set the first cursor type
         CursorType cursorType = (CursorType)randomCursors[currentCursor];
-        CursorManager.Instance.setCursor(cursorType);
+        CursorManager.Instance.cursorType = cursorType;
+
+        // Store the current time
+        experimentStartTime = DateTime.Now;
     }
 
     void Update()
@@ -69,22 +79,29 @@ public class ExperimentManager : MonoBehaviour
 
     public void targetHit()
     {
-        // Movement Time Test
-        if (currentClick > 0)
-            Debug.Log(movementTime);
-
-        // Reset the timer
-        movementTime = 0.0f;
+        // If this block isn't the training block and
+        // this clicking task isn't the start button,
+        // save the data from this clicking task
+        if (!isTrainingBlock && currentClick > 0)
+            storeClick();
 
         // Move onto the next task of the experiment
         // If there are no more trials left, end the experiment
         if (!nextTask())
+        {
+            storeExperiment();
             endExperiment();
+        }
+
+
+        // Reset the timer
+        movementTime = 0.0f;
     }
 
+    // Store the position of the misclick
     public void targetMiss()
     {
-        Debug.Log("Miss");
+        clickData.misClickPos.Add(CursorManager.Instance.getCursorPos());
     }
 
     private void timeOut()
@@ -116,6 +133,10 @@ public class ExperimentManager : MonoBehaviour
         // If the trial is complete, move to the next trial
         else
         {
+            // Store the completed experiment trial
+            if (!isTrainingBlock)
+                storeTrial();
+
             // Attempt to move to the next trial
             bool isNext = ICurrentTrial.MoveNext();
 
@@ -131,11 +152,19 @@ public class ExperimentManager : MonoBehaviour
                 // If the experiment block is complete, move to the next cursor
                 else
                 {
+                    // Store the completed experiment block
+                    storeBlock();
+
                     // If this isn't the last cursor, go to the next cursor
-                    if (currentCursor < randomCursors.Length)
+                    if (currentCursor < randomCursors.Length - 1)
                     {
+                        // Change the cursor
                         currentCursor++;
-                        CursorManager.Instance.setCursor((CursorType)currentCursor);
+                        CursorManager.Instance.cursorType = (CursorType)currentCursor;
+
+                        // Start the training block
+                        ICurrentTrial = ITrainingTrials;
+                        isTrainingBlock = true;
                     }
                     // If this the last cursor, the experiment is complete
                     else
@@ -153,6 +182,54 @@ public class ExperimentManager : MonoBehaviour
 
     private void endExperiment()
     {
+        TargetManager.Instance.clearTargets();
 
+        // Submit the experiment data to the database
+        string experimentJSON = JsonUtility.ToJson(experimentData);
+        DatabaseManager.Instance.submitJSON(experimentJSON);
+    }
+
+    private void storeClick()
+    {
+        clickData.startPos = cursorStartPos;
+        clickData.endPos = CursorManager.Instance.getCursorPos();
+        clickData.movementTime = movementTime;
+
+        // If there were no misclicks, set the list to null
+        if (clickData.misClickPos.Count == 0)
+            clickData.misClickPos = null;
+
+        // The end position of this click is the start
+        // position of the next click
+        cursorStartPos = clickData.endPos;
+
+        trialData.clicks.Add(clickData);
+        clickData = new ClickData();
+    }
+
+    private void storeTrial()
+    {
+        TrialVars trialVars = (TrialVars)ICurrentTrial.Current;
+
+        trialData.amplitude = trialVars.A;
+        trialData.distractorDesnity = trialVars.D;
+        trialData.effectiveWidth = trialVars.W;
+
+        blockData.trials.Add(trialData);
+        trialData = new TrialData();
+    }
+
+    private void storeBlock()
+    {
+        blockData.cursorType = CursorManager.Instance.cursorType;
+
+        experimentData.blocks.Add(blockData);
+        blockData = new BlockData();
+    }
+
+    private void storeExperiment()
+    {
+        experimentData.startTime = experimentStartTime.ToString();
+        experimentData.endTime = DateTime.Now.ToString();
     }
 }

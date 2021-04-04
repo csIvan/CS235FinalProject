@@ -11,7 +11,13 @@ public class CursorManager : MonoBehaviour
     [SerializeField] private Texture2D cursorTexture;
 
     private GameObject currentCursor;
+    private CursorType currentCursorType;
 
+    public CursorType cursorType
+    {
+        set { setCursor(value);  }
+        get { return currentCursorType; }
+    }
 
     void Awake()
     {
@@ -27,23 +33,31 @@ public class CursorManager : MonoBehaviour
         currentCursor = pointCursor;
     }
 
-    public void setCursor(CursorType cursorType)
+    private void setCursor(CursorType cursorType)
     {
         currentCursor.SetActive(false);
 
         switch (cursorType)
         {
             case CursorType.Point:
-                pointCursor.SetActive(true);
+                currentCursor = pointCursor;
                 break;
 
             case CursorType.Bubble:
-                bubbleCursor.SetActive(true);
+                currentCursor = bubbleCursor;
                 break;
 
             case CursorType.Ellipse:
-                ellipseCursor.SetActive(true);
+                currentCursor = ellipseCursor;
                 break;
         }
+
+        currentCursor.SetActive(true);
+        currentCursorType = cursorType;
+    }
+
+    public Vector2 getCursorPos()
+    {
+        return currentCursor.transform.localPosition;
     }
 }
