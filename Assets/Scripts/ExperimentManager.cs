@@ -67,7 +67,7 @@ public class ExperimentManager : MonoBehaviour
 
         // If the timer exceeds the limit, move on to the next trial
         if (movementTime >= timer)
-            Instance.targetHit(null);
+            Instance.targetMiss();
     }
 
     private void startTrial()
@@ -81,44 +81,31 @@ public class ExperimentManager : MonoBehaviour
         trialStartText.text = "Trial " + 1 + " \nClick the target to start";
     }
 
-    public void targetHit(GameObject hitObject)
+    public void targetHit()
     {
-        if (hitObject == TargetManager.Instance.GoalObject || movementTime >= timer)
+        if (currentClick >= experimentBlock.ClicksPerTrial)
         {
-            if (currentClick >= experimentBlock.ClicksPerTrial)
-            {
-                if (ICurrentTrial.MoveNext())
-                    startTrial();
-                else
-                    ICurrentTrial.Reset();
+            if (ICurrentTrial.MoveNext())
+                startTrial();
+            else
+                ICurrentTrial.Reset();
 
-                currentClick = 0;
-            }
-
-            // Movement Time
-            if (currentClick > 0)
-                Debug.Log(movementTime);
-
-            // Reset the timer
-            movementTime = 0.0f;
-
-
-            // Check if trial is in the initial state
-            bool initialState = (TargetManager.Instance.Targets.Count == 1);
-
-            // If initial target is clicked
-            if (initialState && hitObject != null)        
-                initialState = false;
-
-            
-            if (!initialState) {
-                TargetManager.Instance.spawnTrialTargets((TrialVars)ICurrentTrial.Current, 25);
-                currentClick++;
-            }
+            currentClick = 0;
         }
-        else
-        {
-            Debug.Log("Miss");
-        }
+
+        // Movement Time
+        if (currentClick > 0)
+            Debug.Log(movementTime);
+
+        // Reset the timer
+        movementTime = 0.0f;
+
+        TargetManager.Instance.spawnTrialTargets((TrialVars)ICurrentTrial.Current, 25);
+        currentClick++;
+    }
+
+    public void targetMiss()
+    {
+        Debug.Log("Miss");
     }
 }

@@ -92,7 +92,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7610662509062196777}
   - component: {fileID: 7610662509062196776}
-  - component: {fileID: 1250459851006703738}
+  - component: {fileID: 3591167347316053603}
   m_Layer: 6
   m_Name: Goal
   m_TagString: Goal
@@ -166,7 +166,7 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!114 &1250459851006703738
+--- !u!114 &3591167347316053603
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -175,7 +175,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 7610662509062196790}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e542c82411358a748bbb50a581838fa7, type: 3}
+  m_Script: {fileID: 11500000, guid: 4c1685ce642700c4abf7645a51d90691, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   radius: 1

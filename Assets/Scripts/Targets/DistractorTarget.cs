@@ -28,4 +28,9 @@ public class DistractorTarget : Target
             selected = value;
         }
     }
+
+    public override void action()
+    {
+        ExperimentManager.Instance.targetMiss();
+    }
 }

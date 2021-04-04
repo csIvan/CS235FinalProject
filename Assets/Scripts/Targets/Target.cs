@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class Target : MonoBehaviour
+public abstract class Target : MonoBehaviour
 {
     [SerializeField] protected float radius = 1.0f;
     [SerializeField] protected float bubbleScale = 1.3f;
@@ -23,17 +23,7 @@ public class Target : MonoBehaviour
         }
     }
 
-    public virtual bool Selected
-    {
-        get { return selected; } 
-
-        set
-        {
-            bubbleObject.SetActive(value);
-            stopAnimation();
-            selected = value;
-        }
-    }
+    public abstract bool Selected { get; set; }
 
     void Update()
     {
@@ -45,6 +35,8 @@ public class Target : MonoBehaviour
             animateBubble();
         }
     }
+
+    public abstract void action();
 
     public void startAnimation(Vector2 startPos)
     {
