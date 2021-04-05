@@ -59,18 +59,23 @@ public class ExperimentManager : MonoBehaviour
 
     void Start()
     {
-        // Get iterators to the trial blocks
-        ITrainingTrials = trainingBlock.GetEnumerator();
-        IExperimentTrials = experimentBlock.GetEnumerator();
-        ICurrentTrial = ITrainingTrials;
-        startTrial();
+
+        // Store the current time
+        experimentStartTime = DateTime.Now;
+
 
         // Set the first cursor type
         CursorType cursorType = (CursorType)randomCursors[currentCursor];
         CursorManager.Instance.cursorType = cursorType;
 
-        // Store the current time
-        experimentStartTime = DateTime.Now;
+        // Get iterators to the trial blocks
+        ITrainingTrials = trainingBlock.GetEnumerator();
+        IExperimentTrials = experimentBlock.GetEnumerator();
+        ICurrentTrial = ITrainingTrials;
+
+        // Start the experiment
+        ICurrentTrial.MoveNext();
+        startTrial();
     }
 
     void Update()
@@ -124,8 +129,6 @@ public class ExperimentManager : MonoBehaviour
     private void startTrial()
     {
         TargetManager.Instance.spawnStartTarget();
-        
-        ICurrentTrial.MoveNext();
 
         // Don't show the trial start text on the first trial
         if (firstTrial)
@@ -171,11 +174,11 @@ public class ExperimentManager : MonoBehaviour
                     storeBlock();
 
                     // If this isn't the last cursor, go to the next cursor
-                    if (currentCursor < randomCursors.Length - 1)
+                    if (currentCursor + 1 < randomCursors.Length)
                     {
                         // Change the cursor
                         currentCursor++;
-                        CursorManager.Instance.cursorType = (CursorType)currentCursor;
+                        CursorManager.Instance.cursorType = (CursorType)randomCursors[currentCursor];
 
                         // Start the training block
                         ICurrentTrial = ITrainingTrials;
@@ -188,6 +191,7 @@ public class ExperimentManager : MonoBehaviour
 
                 // Reset the block before using it
                 ICurrentTrial.Reset();
+                ICurrentTrial.MoveNext();
             }
 
             // Start the next trial

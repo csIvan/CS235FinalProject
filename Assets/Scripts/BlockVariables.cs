@@ -58,7 +58,7 @@ public class BlockVariables : IEnumerator, IEnumerable
     // IEnumerator and IEnumerable
     public IEnumerator GetEnumerator()
     {
-        return (IEnumerator)this;
+        return this;
     }
 
     // IEnumerable
