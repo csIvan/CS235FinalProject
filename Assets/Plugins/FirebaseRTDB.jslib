@@ -9,13 +9,13 @@ mergeInto(LibraryManager.library, {
     var parsedObjectName = Pointer_stringify(objectName);
     var parsedCallback = Pointer_stringify(callback);
     var parsedFallback = Pointer_stringify(fallback);
-    
+
     try {
         firebase.database().ref(parsedPath).push().set(parsedJSON).then(function(unused) {
-            window.unityInstance.Module.SendMessage(parsedObjectName, parsedCallback);
+            window.unityInstance.SendMessage(parsedObjectName, parsedCallback);
         });
     } catch (error) {
-        window.unityInstance.Module.SendMessage(parsedObjectName, parsedFallback);
+        window.unityInstance.SendMessage(parsedObjectName, parsedFallback);
     }
   }
 

@@ -49,6 +49,7 @@ https://github.com/sno/unity-webgl-responsive
         productVersion: "{{{ PRODUCT_VERSION }}}",
       }).then((unityInstance) => {
         myGameInstance = unityInstance;
+        window.unityInstance = unityInstance;
       });
     </script>
 
