@@ -621,7 +621,6 @@ MonoBehaviour:
   maxError: 0.1
   ratioLerpUpInterval: 0.6
   ratioLerpDownInterval: 0.15
-  rotationLerpInterval: 0
 --- !u!212 &751806314
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -1048,7 +1047,7 @@ MonoBehaviour:
     W:
     - 0.4
   experimentBlock:
-    clicksPerTrial: 5
+    clicksPerTrial: 10
     A:
     - 50
     - 60
