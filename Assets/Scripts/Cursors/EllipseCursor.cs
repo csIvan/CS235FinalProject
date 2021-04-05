@@ -9,8 +9,9 @@ public class EllipseCursor : Cursor
     [SerializeField] private float margin = 1.0f;
     [SerializeField] private float maxError = 0.1f;
 
-    [SerializeField] private float ratioLerpUpInterval;
-    [SerializeField] private float ratioLerpDownInterval;
+    [SerializeField] private float ratioLerpUpInterval = 0.6f;
+    [SerializeField] private float ratioLerpDownInterval = 0.15f;
+    [SerializeField] private float rotationLerpInterval = 0.15f;
 
     private Vector2 dimensions = new Vector2(1.0f, 1.0f);
     private Vector2 prevPos, currPos;
@@ -46,7 +47,23 @@ public class EllipseCursor : Cursor
 
         // Only update the rotation when the cursor is moving
         if (speed != 0.0f)
-            transform.right = velocity;
+        {
+            // Determine if the current or flipped orientation is closer to the target
+            float rightMagSquared = ((Vector2)transform.right - velocity).sqrMagnitude;
+            float leftMagSquared = ((Vector2)(-transform.right) - velocity).sqrMagnitude;
+
+            // If the flipped orientation is closer, flip the rotation vector
+            if (leftMagSquared < rightMagSquared)
+                transform.right = -transform.right;
+
+            // Lerp the rotation towards the target
+            Vector2 lerpedRightVec;
+            lerpedRightVec.x = Mathf.Lerp(transform.right.x, velocity.x, rotationLerpInterval);
+            lerpedRightVec.y = Mathf.Lerp(transform.right.y, velocity.y, rotationLerpInterval);
+
+            // Set the new rotation
+            transform.right = lerpedRightVec;
+        }
 
         // Set the ellipse radius ratio
         targetRadiusRatio = mapf(speed, 0.0f, maxSpeed, 1.0f, maxRadiusRatio);
