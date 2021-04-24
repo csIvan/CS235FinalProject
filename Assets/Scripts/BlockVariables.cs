@@ -55,6 +55,12 @@ public class BlockVariables : IEnumerator, IEnumerable
                     combinations[combIndex++] = new TrialVars(A[AIndex], D[DIndex], W[WIndex]);
     }
 
+    public int getNumTrials()
+    {
+        numTrials = A.Length * D.Length * W.Length;
+        return numTrials;
+    }
+
     // IEnumerator and IEnumerable
     public IEnumerator GetEnumerator()
     {

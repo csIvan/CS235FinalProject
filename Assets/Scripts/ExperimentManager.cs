@@ -1,7 +1,6 @@
 using System;
 using System.Collections;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class ExperimentManager : MonoBehaviour
 {
@@ -11,6 +10,8 @@ public class ExperimentManager : MonoBehaviour
     // UI References
     [SerializeField] private GameObject experimentStartText;
     [SerializeField] private GameObject trialStartText;
+    [SerializeField] private GameObject trialCountText;
+    private TrialCountTextManager trialCountTextManager;
 
     // The parameters for the experiment
     [SerializeField] private Vector2 experimentBounds = new Vector2(250.0f, 150.0f);
@@ -52,6 +53,8 @@ public class ExperimentManager : MonoBehaviour
         if (Instance == null)
             Instance = this;
 
+        trialCountTextManager = trialCountText.GetComponent<TrialCountTextManager>();
+
         // Generate a random array of cursors
         int numCursors = Enum.GetNames(typeof(CursorType)).Length;
         randomCursors = Utility.randomIntArray(numCursors);
@@ -59,10 +62,14 @@ public class ExperimentManager : MonoBehaviour
 
     void Start()
     {
-
         // Store the current time
         experimentStartTime = DateTime.Now;
 
+        // Get the total number of trials
+        int trialsPerCursor = trainingBlock.getNumTrials() + experimentBlock.getNumTrials();
+        int totalTrials = trialsPerCursor * cursorTypes.Length;
+        // Set the number of trials
+        trialCountTextManager.setNumTrials(totalTrials);
 
         // Set the first cursor type
         CursorType cursorType = (CursorType)randomCursors[currentCursor];
@@ -140,8 +147,12 @@ public class ExperimentManager : MonoBehaviour
         if (firstTrial)
             firstTrial = false;
         // On subsequent trials, show the trial start text
+        // and update the remaining trial count
         else
+        {
+            trialCountTextManager.nextTrial();
             trialStartText.SetActive(true);
+        }
     }
 
     // Attempts to proceed to the next task in the experiment
