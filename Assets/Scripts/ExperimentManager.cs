@@ -99,6 +99,9 @@ public class ExperimentManager : MonoBehaviour
         // save the data from this clicking task
         if (!isTrainingBlock && currentClick > 0)
             storeClick();
+        // If this clicking task is the start button, save the cursor position
+        if (currentClick == 0)
+            cursorStartPos = CursorManager.Instance.getCursorPos();
 
         // Move onto the next task of the experiment
         // If there are no more trials left, end the experiment
@@ -120,8 +123,11 @@ public class ExperimentManager : MonoBehaviour
 
     private void targetTimeOut()
     {
-        // Store the click data with a flag signifying that the timer ran out
-        storeClick(false);
+        // If this block isn't the training block,
+        // save the data from this clicking task
+        if (!isTrainingBlock)
+            storeClick(false);
+
         nextTask();
         movementTime = 0.0f;
     }
@@ -214,7 +220,10 @@ public class ExperimentManager : MonoBehaviour
 
     private void storeClick(bool timeout = false)
     {
+        // Position of the mouse when the trial started
         clickData.startPos = cursorStartPos;
+        // Current position of the mouse
+        clickData.endPos = CursorManager.Instance.getCursorPos();
         clickData.goalPos = TargetManager.Instance.GoalObject.transform.localPosition;
         clickData.movementTime = movementTime;
         clickData.timeout = timeout;
@@ -225,7 +234,7 @@ public class ExperimentManager : MonoBehaviour
 
         // The end position of this click is the start
         // position of the next click
-        cursorStartPos = clickData.endPos;
+        cursorStartPos = CursorManager.Instance.getCursorPos();
 
         trialData.clicks.Add(clickData);
         clickData = new ClickData();
